@@ -6,10 +6,15 @@ import (
 	"log"
 )
 
+func init() {
+	log.SetFlags(0)
+	log.SetPrefix("tomi: ")
+}
+
 func main() {
 	flag.Parse()
 	if len(flag.Args()) != 1 {
-		log.Fatal("Server address missing")
+		log.Fatal("server address missing")
 	}
-	log.Print("Sorry, not implemened yet.")
+	log.Print("sorry, not implemened yet.")
 }
