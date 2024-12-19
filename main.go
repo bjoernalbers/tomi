@@ -30,5 +30,10 @@ func main() {
 	if len(flag.Args()) != 1 {
 		log.Fatal("server address missing")
 	}
+	if _, err := os.Stat(userAppsDir); err != nil {
+		if err := os.Mkdir(userAppsDir, 0700); err != nil {
+			log.Fatalf("could not create user applications directory: %v", err)
+		}
+	}
 	log.Print("sorry, not implemened yet.")
 }
