@@ -3,6 +3,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -42,4 +43,8 @@ func main() {
 		}
 	}
 	log.Print("sorry, not implemened yet.")
+}
+
+func tomedoDownloadURL(addr string) string {
+	return fmt.Sprintf("http://%s:8080/tomedo_live/filebyname/serverinternal/tomedo.app.tar", addr)
 }
