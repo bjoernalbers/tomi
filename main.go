@@ -30,9 +30,15 @@ func main() {
 	if len(flag.Args()) != 1 {
 		log.Fatal("server address missing")
 	}
+	// Create localized user applications directory if missing.
 	if _, err := os.Stat(userAppsDir); err != nil {
 		if err := os.Mkdir(userAppsDir, 0700); err != nil {
 			log.Fatalf("could not create user applications directory: %v", err)
+		}
+		if f, err := os.Create(filepath.Join(userAppsDir, ".localized")); err != nil {
+			log.Fatalf("could not localize user applications directory: %v", err)
+		} else {
+			f.Close()
 		}
 	}
 	log.Print("sorry, not implemened yet.")
