@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
 )
 
@@ -45,6 +46,7 @@ func main() {
 			f.Close()
 		}
 	}
+	// Download and unpack tomedo.
 	response, err := http.Get(tomedoDownloadURL(serverAddress))
 	if err != nil {
 		log.Fatalf("failed to download tomedo: %v", err)
@@ -61,7 +63,10 @@ func main() {
 	if _, err := io.Copy(tempFile, response.Body); err != nil {
 		log.Fatal("failed to download tomedo: %v", err)
 	}
-	log.Print(tempFile.Name())
+	tar := exec.Command("/usr/bin/tar", "-x", "-f", tempFile.Name(), "-C", userAppsDir)
+	if output, err := tar.CombinedOutput(); err != nil {
+		log.Fatalf("failed to unpack tomedo: %s", string(output))
+	}
 }
 
 func tomedoDownloadURL(addr string) string {
