@@ -15,7 +15,7 @@ func init() {
 
 func main() {
 	if os.Geteuid() == 0 {
-		log.Fatal("please run as regular user, not as root (with sudo)")
+		log.Fatal("please run as regular user, not as root or with sudo!")
 	}
 	home := os.Getenv("HOME")
 	if home == "" {
