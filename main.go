@@ -4,7 +4,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"os"
 	"path/filepath"
 )
@@ -31,6 +33,7 @@ func main() {
 	if len(flag.Args()) != 1 {
 		log.Fatal("server address missing")
 	}
+	serverAddress := flag.Args()[0]
 	// Create localized user applications directory if missing.
 	if _, err := os.Stat(userAppsDir); err != nil {
 		if err := os.Mkdir(userAppsDir, 0700); err != nil {
@@ -42,7 +45,23 @@ func main() {
 			f.Close()
 		}
 	}
-	log.Print("sorry, not implemened yet.")
+	response, err := http.Get(tomedoDownloadURL(serverAddress))
+	if err != nil {
+		log.Fatalf("failed to download tomedo: %v", err)
+	}
+	defer response.Body.Close()
+	if response.StatusCode != http.StatusOK {
+		log.Fatalf("failed to download tomedo: %d %s", response.StatusCode, http.StatusText(response.StatusCode))
+	}
+	tempFile, err := os.CreateTemp("", "tomedo.app.tar.*")
+	if err != nil {
+		log.Fatal("failed to create temporary file: %v", err)
+	}
+	defer tempFile.Close()
+	if _, err := io.Copy(tempFile, response.Body); err != nil {
+		log.Fatal("failed to download tomedo: %v", err)
+	}
+	log.Print(tempFile.Name())
 }
 
 func tomedoDownloadURL(addr string) string {
