@@ -24,7 +24,7 @@ func Exists(a App) bool {
 }
 
 // Install performs the actual app installation.
-func Install(home string, p App) error {
+func Install(p App) error {
 	u, err := p.DownloadURL()
 	if err != nil {
 		return err

@@ -61,7 +61,7 @@ func main() {
 		os.Exit(0)
 	}
 	for _, a := range apps {
-		if err := app.Install(home, a); err != nil {
+		if err := app.Install(a); err != nil {
 			log.Fatalf("%s: %v", a.Name(), err)
 		}
 	}
