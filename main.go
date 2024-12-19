@@ -57,12 +57,12 @@ func main() {
 	}
 	tempFile, err := os.CreateTemp("", "tomedo.app.tar.*")
 	if err != nil {
-		log.Fatal("failed to create temporary file: %v", err)
+		log.Fatalf("failed to create temporary file: %v", err)
 	}
 	defer os.Remove(tempFile.Name())
 	defer tempFile.Close()
 	if _, err := io.Copy(tempFile, response.Body); err != nil {
-		log.Fatal("failed to download tomedo: %v", err)
+		log.Fatalf("failed to download tomedo: %v", err)
 	}
 	tar := exec.Command("/usr/bin/tar", "-x", "-f", tempFile.Name(), "-C", userAppsDir)
 	if output, err := tar.CombinedOutput(); err != nil {
