@@ -38,10 +38,10 @@ func main() {
 	// Create localized user applications directory if missing.
 	if _, err := os.Stat(userAppsDir); err != nil {
 		if err := os.Mkdir(userAppsDir, 0700); err != nil {
-			log.Fatalf("could not create user applications directory: %v", err)
+			log.Fatalf("failed to create user applications directory: %v", err)
 		}
 		if f, err := os.Create(filepath.Join(userAppsDir, ".localized")); err != nil {
-			log.Fatalf("could not localize user applications directory: %v", err)
+			log.Fatalf("failed to localize user applications directory: %v", err)
 		} else {
 			f.Close()
 		}
