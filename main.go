@@ -59,6 +59,7 @@ func main() {
 	if err != nil {
 		log.Fatal("failed to create temporary file: %v", err)
 	}
+	defer os.Remove(tempFile.Name())
 	defer tempFile.Close()
 	if _, err := io.Copy(tempFile, response.Body); err != nil {
 		log.Fatal("failed to download tomedo: %v", err)
