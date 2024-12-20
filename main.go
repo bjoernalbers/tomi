@@ -15,6 +15,7 @@ import (
 func init() {
 	log.SetFlags(0)
 	log.SetPrefix("tomi: ")
+	flag.Usage = Usage
 }
 
 func main() {
@@ -68,6 +69,10 @@ func main() {
 	if output, err := tar.CombinedOutput(); err != nil {
 		log.Fatalf("failed to unpack tomedo: %s", string(output))
 	}
+}
+
+func Usage() {
+	fmt.Fprintln(flag.CommandLine.Output(), "Usage: tomi <tomedo_server_address>")
 }
 
 func tomedoDownloadURL(addr string) string {
