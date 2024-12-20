@@ -21,7 +21,9 @@ func init() {
 func main() {
 	flag.Parse()
 	if len(flag.Args()) != 1 {
-		log.Fatal("server address missing")
+		log.Println("server address missing")
+		Usage()
+		os.Exit(1)
 	}
 	serverAddress := flag.Args()[0]
 	if os.Geteuid() == 0 {
