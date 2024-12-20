@@ -12,6 +12,9 @@ import (
 	"path/filepath"
 )
 
+// version gets set via ldflags
+var version = "unset"
+
 func init() {
 	log.SetFlags(0)
 	log.SetPrefix("tomi: ")
