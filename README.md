@@ -5,14 +5,16 @@ tomi automates this process to relieve lazy admins (like me) of some work.
 
 ## Installation
 
-Download the [latest tomi binary](https://github.com/bjoernalbers/tomi/releases/latest),
-make it executable and put it in your `$PATH`:
+To install the [latest release](https://github.com/bjoernalbers/tomi/releases/latest)
+on a Mac, run this command:
 
 ```
 curl -sLO https://github.com/bjoernalbers/tomi/releases/latest/download/tomi && \
     chmod +x tomi && \
     mv tomi /usr/local/bin
 ```
+
+Running `rm /usr/local/bin/tomi` will uninstall it again.
 
 ## Usage
 
