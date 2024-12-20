@@ -18,6 +18,11 @@ func init() {
 }
 
 func main() {
+	flag.Parse()
+	if len(flag.Args()) != 1 {
+		log.Fatal("server address missing")
+	}
+	serverAddress := flag.Args()[0]
 	if os.Geteuid() == 0 {
 		log.Fatal("please run as regular user, not as root or with sudo!")
 	}
@@ -30,11 +35,6 @@ func main() {
 	if _, err := os.Stat(tomedoAppDir); err == nil {
 		os.Exit(0)
 	}
-	flag.Parse()
-	if len(flag.Args()) != 1 {
-		log.Fatal("server address missing")
-	}
-	serverAddress := flag.Args()[0]
 	// Create localized user applications directory if missing.
 	if _, err := os.Stat(userAppsDir); err != nil {
 		if err := os.Mkdir(userAppsDir, 0700); err != nil {
