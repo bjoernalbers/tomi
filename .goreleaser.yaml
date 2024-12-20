@@ -1,0 +1,20 @@
+---
+version: 2
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+
+universal_binaries:
+  - replace: true
+    hooks:
+      post: "codesign --sign '{{.Env.APP_SIGN_IDENTITY}}' '{{ .Path }}'"
+
+archives:
+  - format: binary
+    name_template: "{{ .ProjectName }}"
+
+checksum:
+  name_template: "{{ .ProjectName }}-checksums.txt"
