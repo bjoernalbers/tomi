@@ -24,5 +24,5 @@ Just run `tomi` with your tomedo server as argument (hostname or IP addres), i.e
 tomi tomedo.example.com
 ```
 
-This will download the tomedo.app from your tomedo server and install it under
-`$HOME/Programme`.
+This will download the tomedo.app from your tomedo server, install it under
+`$HOME/Programme` and add it to the Dock.
