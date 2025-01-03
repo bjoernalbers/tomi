@@ -39,9 +39,9 @@ func main() {
 }
 
 func installTomedo(serverAddress string) error {
-	home := os.Getenv("HOME")
-	if home == "" {
-		return fmt.Errorf("$HOME is not set")
+	home, err := GetHome()
+	if err != nil {
+		return err
 	}
 	userAppsDir := filepath.Join(home, "Applications")
 	tomedoAppDir := filepath.Join(userAppsDir, "tomedo.app")
@@ -72,6 +72,16 @@ func installTomedo(serverAddress string) error {
 		return err
 	}
 	return nil
+}
+
+// GetHome returns the path to the user's home directory.
+// If $HOME is not set, an error is returned.
+func GetHome() (string, error) {
+	home := os.Getenv("HOME")
+	if home == "" {
+		return home, fmt.Errorf("$HOME is not set")
+	}
+	return home, nil
 }
 
 func Usage() {
