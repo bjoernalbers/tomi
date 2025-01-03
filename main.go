@@ -43,21 +43,13 @@ func installTomedo(serverAddress string) error {
 	if err != nil {
 		return err
 	}
-	userAppsDir := filepath.Join(home, "Applications")
+	userAppsDir, err := CreateUserAppsDir(home)
+	if err != nil {
+		return err
+	}
 	tomedoAppDir := filepath.Join(userAppsDir, "tomedo.app")
 	if _, err := os.Stat(tomedoAppDir); err == nil {
 		return nil
-	}
-	// Create localized user applications directory if missing.
-	if _, err := os.Stat(userAppsDir); err != nil {
-		if err := os.Mkdir(userAppsDir, 0700); err != nil {
-			return fmt.Errorf("failed to create user applications directory: %v", err)
-		}
-		if f, err := os.Create(filepath.Join(userAppsDir, ".localized")); err != nil {
-			return fmt.Errorf("failed to localize user applications directory: %v", err)
-		} else {
-			f.Close()
-		}
 	}
 	filename, err := Download(tomedoDownloadURL(serverAddress))
 	if err != nil {
@@ -82,6 +74,24 @@ func GetHome() (string, error) {
 		return home, fmt.Errorf("$HOME is not set")
 	}
 	return home, nil
+}
+
+// CreateUserAppsDir creates a localized user application directory if missing
+// and returns its path.
+func CreateUserAppsDir(home string) (string, error) {
+	dir := filepath.Join(home, "Applications")
+	if _, err := os.Stat(dir); err == nil {
+		return dir, nil
+	}
+	if err := os.Mkdir(dir, 0700); err != nil {
+		return "", fmt.Errorf("create user apps dir: %v", err)
+	}
+	if f, err := os.Create(filepath.Join(dir, ".localized")); err != nil {
+		return "", fmt.Errorf("localize user apps dir: %v", err)
+	} else {
+		f.Close()
+	}
+	return dir, nil
 }
 
 func Usage() {
