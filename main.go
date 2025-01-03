@@ -59,25 +59,12 @@ func installTomedo(serverAddress string) error {
 			f.Close()
 		}
 	}
-	// Download and unpack tomedo.
-	response, err := http.Get(tomedoDownloadURL(serverAddress))
+	filename, err := Download(tomedoDownloadURL(serverAddress))
 	if err != nil {
-		return fmt.Errorf("failed to download tomedo: %v", err)
+		return err
 	}
-	defer response.Body.Close()
-	if response.StatusCode != http.StatusOK {
-		return fmt.Errorf("failed to download tomedo: %d %s", response.StatusCode, http.StatusText(response.StatusCode))
-	}
-	tempFile, err := os.CreateTemp("", "tomedo.app.tar.*")
-	if err != nil {
-		return fmt.Errorf("failed to create temporary file: %v", err)
-	}
-	defer os.Remove(tempFile.Name())
-	defer tempFile.Close()
-	if _, err := io.Copy(tempFile, response.Body); err != nil {
-		return fmt.Errorf("failed to download tomedo: %v", err)
-	}
-	if err := Unpack(userAppsDir, tempFile.Name()); err != nil {
+	defer os.Remove(filename)
+	if err := Unpack(userAppsDir, filename); err != nil {
 		return err
 	}
 	// Add tomedo to Dock.
@@ -92,6 +79,28 @@ func Usage() {
 
 Usage: tomi <tomedo_server_address>`, version)
 	fmt.Fprintln(flag.CommandLine.Output(), header)
+}
+
+// Download downloads URL into temp. file and returns its filename.
+// If the download fails, an error is returned.
+func Download(url string) (filename string, err error) {
+	response, err := http.Get(url)
+	if err != nil {
+		return filename, fmt.Errorf("download: %v", err)
+	}
+	defer response.Body.Close()
+	if response.StatusCode != http.StatusOK {
+		return filename, fmt.Errorf("download: %d %s", response.StatusCode, http.StatusText(response.StatusCode))
+	}
+	tempFile, err := os.CreateTemp("", filepath.Base(url))
+	if err != nil {
+		return filename, fmt.Errorf("create temp. file: %v", err)
+	}
+	defer tempFile.Close()
+	if _, err := io.Copy(tempFile, response.Body); err != nil {
+		return filename, fmt.Errorf("copy download to temp. file: %v", err)
+	}
+	return tempFile.Name(), nil
 }
 
 // Unpack extracts content from archive file into dir.
