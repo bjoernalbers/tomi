@@ -47,8 +47,8 @@ func installTomedo(serverAddress string) error {
 	if err != nil {
 		return err
 	}
-	tomedoAppDir := filepath.Join(userAppsDir, "tomedo.app")
-	if _, err := os.Stat(tomedoAppDir); err == nil {
+	appDir := filepath.Join(userAppsDir, "tomedo.app")
+	if _, err := os.Stat(appDir); err == nil {
 		return nil
 	}
 	filename, err := Download(tomedoDownloadURL(serverAddress))
@@ -60,7 +60,7 @@ func installTomedo(serverAddress string) error {
 		return err
 	}
 	// Add tomedo to Dock.
-	if err := addFileToDock(tomedoAppDir); err != nil {
+	if err := addFileToDock(appDir); err != nil {
 		return err
 	}
 	return nil
