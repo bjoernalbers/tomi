@@ -59,8 +59,7 @@ func installTomedo(serverAddress string) error {
 	if err := Unpack(userAppsDir, filename); err != nil {
 		return err
 	}
-	// Add tomedo to Dock.
-	if err := addFileToDock(appDir); err != nil {
+	if err := AddFileToDock(appDir); err != nil {
 		return err
 	}
 	return nil
@@ -138,14 +137,15 @@ func tomedoDownloadURL(addr string) string {
 	return fmt.Sprintf("http://%s:8080/tomedo_live/filebyname/serverinternal/tomedo.app.tar", addr)
 }
 
-func addFileToDock(path string) error {
+// AddFileToDock adds the file to the macOS Dock.
+func AddFileToDock(file string) error {
 	// https://stackoverflow.com/questions/66106001/add-files-to-dock-on-macos-using-the-command-line
-	plist := fmt.Sprintf("<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file://%s/</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>", path)
+	plist := fmt.Sprintf("<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file://%s/</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>", file)
 	if err := exec.Command("/usr/bin/defaults", "write", "com.apple.dock", "persistent-apps", "-array-add", plist).Run(); err != nil {
-		return fmt.Errorf("failed to add file to Dock: %q", path)
+		return fmt.Errorf("add file to Dock: %q", file)
 	}
 	if output, err := exec.Command("/usr/bin/killall", "Dock").CombinedOutput(); err != nil {
-		return fmt.Errorf("failed to restart Dock: %s", string(output))
+		return fmt.Errorf("restart Dock: %s", string(output))
 	}
 	return nil
 }
