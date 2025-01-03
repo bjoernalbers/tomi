@@ -33,7 +33,7 @@ func main() {
 		log.Fatal("please run as regular user, not as root or with sudo!")
 	}
 	if err := installTomedo(serverAddress); err != nil {
-		log.Fatalf("failed to install tomedo: %v", err)
+		log.Fatalf("install tomedo: %v", err)
 	}
 
 }
@@ -77,9 +77,8 @@ func installTomedo(serverAddress string) error {
 	if _, err := io.Copy(tempFile, response.Body); err != nil {
 		return fmt.Errorf("failed to download tomedo: %v", err)
 	}
-	tar := exec.Command("/usr/bin/tar", "-x", "-f", tempFile.Name(), "-C", userAppsDir)
-	if output, err := tar.CombinedOutput(); err != nil {
-		return fmt.Errorf("failed to unpack tomedo: %s", string(output))
+	if err := Unpack(userAppsDir, tempFile.Name()); err != nil {
+		return err
 	}
 	// Add tomedo to Dock.
 	if err := addFileToDock(tomedoAppDir); err != nil {
@@ -93,6 +92,17 @@ func Usage() {
 
 Usage: tomi <tomedo_server_address>`, version)
 	fmt.Fprintln(flag.CommandLine.Output(), header)
+}
+
+// Unpack extracts content from archive file into dir.
+// The archive is extracted using the macOS tar command which can handle many
+// different archive formats including tar and zip (see "man tar").
+func Unpack(dir, file string) error {
+	cmd := exec.Command("/usr/bin/tar", "-x", "-f", file, "-C", dir)
+	if output, err := cmd.CombinedOutput(); err != nil {
+		return fmt.Errorf("unpack: %s", string(output))
+	}
+	return nil
 }
 
 func tomedoDownloadURL(addr string) string {
