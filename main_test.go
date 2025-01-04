@@ -1,21 +1,22 @@
 package main
 
 import (
+	"net/url"
 	"os"
 	"path/filepath"
 	"testing"
 )
 
-func TestServerURL(t *testing.T) {
-	server := Server{Host: "tomedo.example.com", Port: 8080, Path: "tomedo_live/"}
+func TestServerString(t *testing.T) {
+	server := Server{&url.URL{Scheme: "http", Host: "tomedo.example.com:8080", Path: "tomedo_live/"}}
 	want := "http://tomedo.example.com:8080/tomedo_live/"
-	if got := server.URL(); got != want {
-		t.Fatalf("%#v.URL():\ngot:\t%q\nwant:\t%q", server, got, want)
+	if got := server.String(); got != want {
+		t.Fatalf("%#v.String():\ngot:\t%q\nwant:\t%q", server, got, want)
 	}
 }
 
 func TestServerTomedoDownloadURL(t *testing.T) {
-	server := Server{Host: "tomedo.example.com", Port: 8080, Path: "tomedo_live/"}
+	server := Server{&url.URL{Scheme: "http", Host: "tomedo.example.com:8080", Path: "tomedo_live/"}}
 	want := "http://tomedo.example.com:8080/tomedo_live/filebyname/serverinternal/tomedo.app.tar"
 	if got := server.TomedoDownloadURL(); got != want {
 		t.Fatalf("%#v.TomedoDownloadURL():\ngot:\t%q\nwant:\t%q", server, got, want)

@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -38,17 +39,11 @@ func main() {
 }
 
 type Server struct {
-	Host string
-	Port int
-	Path string
-}
-
-func (s *Server) URL() string {
-	return fmt.Sprintf("http://%s:%d/%s", s.Host, s.Port, s.Path)
+	*url.URL
 }
 
 func (s *Server) TomedoDownloadURL() string {
-	return s.URL() + "filebyname/serverinternal/tomedo.app.tar"
+	return s.JoinPath("filebyname/serverinternal/tomedo.app.tar").String()
 }
 
 func installTomedo(serverAddress string) error {
@@ -64,7 +59,7 @@ func installTomedo(serverAddress string) error {
 	if _, err := os.Stat(appDir); err == nil {
 		return nil
 	}
-	server := Server{Host: serverAddress, Port: 8080, Path: "tomedo_live/"}
+	server := Server{&url.URL{Scheme: "http", Host: serverAddress + ":8080", Path: "tomedo_live/"}}
 	filename, err := Download(server.TomedoDownloadURL())
 	if err != nil {
 		return err
