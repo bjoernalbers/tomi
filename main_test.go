@@ -6,6 +6,22 @@ import (
 	"testing"
 )
 
+func TestServerURL(t *testing.T) {
+	server := Server{Host: "tomedo.example.com", Port: 8080, Path: "tomedo_live/"}
+	want := "http://tomedo.example.com:8080/tomedo_live/"
+	if got := server.URL(); got != want {
+		t.Fatalf("%#v.URL():\ngot:\t%q\nwant:\t%q", server, got, want)
+	}
+}
+
+func TestServerTomedoDownloadURL(t *testing.T) {
+	server := Server{Host: "tomedo.example.com", Port: 8080, Path: "tomedo_live/"}
+	want := "http://tomedo.example.com:8080/tomedo_live/filebyname/serverinternal/tomedo.app.tar"
+	if got := server.TomedoDownloadURL(); got != want {
+		t.Fatalf("%#v.TomedoDownloadURL():\ngot:\t%q\nwant:\t%q", server, got, want)
+	}
+}
+
 func TestCreateUserAppsDir(t *testing.T) {
 	testHome, err := os.MkdirTemp("", "home")
 	if err != nil {
@@ -21,13 +37,5 @@ func TestCreateUserAppsDir(t *testing.T) {
 	}
 	if filepath.Base(dir) != "Applications" {
 		t.Fatalf("wrong dirname: %q", dir)
-	}
-}
-
-func TestTomedoDownloadURL(t *testing.T) {
-	got := tomedoDownloadURL("tomedo.example.com")
-	want := "http://tomedo.example.com:8080/tomedo_live/filebyname/serverinternal/tomedo.app.tar"
-	if got != want {
-		t.Errorf("tomedoDownloadURL()\ngot:\t%s\nwant:\t%s\n", got, want)
 	}
 }

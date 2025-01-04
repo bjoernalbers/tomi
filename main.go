@@ -35,7 +35,20 @@ func main() {
 	if err := installTomedo(serverAddress); err != nil {
 		log.Fatalf("install tomedo: %v", err)
 	}
+}
 
+type Server struct {
+	Host string
+	Port int
+	Path string
+}
+
+func (s *Server) URL() string {
+	return fmt.Sprintf("http://%s:%d/%s", s.Host, s.Port, s.Path)
+}
+
+func (s *Server) TomedoDownloadURL() string {
+	return s.URL() + "filebyname/serverinternal/tomedo.app.tar"
 }
 
 func installTomedo(serverAddress string) error {
@@ -51,7 +64,8 @@ func installTomedo(serverAddress string) error {
 	if _, err := os.Stat(appDir); err == nil {
 		return nil
 	}
-	filename, err := Download(tomedoDownloadURL(serverAddress))
+	server := Server{Host: serverAddress, Port: 8080, Path: "tomedo_live/"}
+	filename, err := Download(server.TomedoDownloadURL())
 	if err != nil {
 		return err
 	}
@@ -131,10 +145,6 @@ func Unpack(dir, file string) error {
 		return fmt.Errorf("unpack: %s", string(output))
 	}
 	return nil
-}
-
-func tomedoDownloadURL(addr string) string {
-	return fmt.Sprintf("http://%s:8080/tomedo_live/filebyname/serverinternal/tomedo.app.tar", addr)
 }
 
 // AddFileToDock adds the file to the macOS Dock.
