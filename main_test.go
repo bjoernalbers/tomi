@@ -18,18 +18,10 @@ func ServerURL() *url.URL {
 }
 
 func TestTomedoDownloadURL(t *testing.T) {
-	tomedo := Tomedo{ServerURL()}
+	tomedo := Tomedo{}
 	want := "http://tomedo.example.com:8080/tomedo_live/filebyname/serverinternal/tomedo.app.tar"
-	if got := tomedo.DownloadURL(); got != want {
-		t.Fatalf("%#v.DownloadURL():\ngot:\t%q\nwant:\t%q", tomedo, got, want)
-	}
-}
-
-func TestTomedoString(t *testing.T) {
-	tomedo := Tomedo{ServerURL()}
-	want := "http://tomedo.example.com:8080/tomedo_live/"
-	if got := tomedo.String(); got != want {
-		t.Fatalf("%#v.String():\ngot:\t%q\nwant:\t%q", tomedo, got, want)
+	if got := tomedo.DownloadURL(ServerURL()); got != want {
+		t.Fatalf("%T.DownloadURL(%q):\ngot:\t%q\nwant:\t%q", tomedo, ServerURL(), got, want)
 	}
 }
 
