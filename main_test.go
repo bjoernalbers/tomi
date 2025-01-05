@@ -7,8 +7,18 @@ import (
 	"testing"
 )
 
+const serverURL = "http://tomedo.example.com:8080/tomedo_live/"
+
+func ServerURL() *url.URL {
+	u, err := url.Parse(serverURL)
+	if err != nil {
+		panic(err)
+	}
+	return u
+}
+
 func TestServerString(t *testing.T) {
-	server := Server{&url.URL{Scheme: "http", Host: "tomedo.example.com:8080", Path: "tomedo_live/"}}
+	server := Server{ServerURL()}
 	want := "http://tomedo.example.com:8080/tomedo_live/"
 	if got := server.String(); got != want {
 		t.Fatalf("%#v.String():\ngot:\t%q\nwant:\t%q", server, got, want)
@@ -16,7 +26,7 @@ func TestServerString(t *testing.T) {
 }
 
 func TestServerTomedoDownloadURL(t *testing.T) {
-	server := Server{&url.URL{Scheme: "http", Host: "tomedo.example.com:8080", Path: "tomedo_live/"}}
+	server := Server{ServerURL()}
 	want := "http://tomedo.example.com:8080/tomedo_live/filebyname/serverinternal/tomedo.app.tar"
 	if got := server.TomedoDownloadURL(); got != want {
 		t.Fatalf("%#v.TomedoDownloadURL():\ngot:\t%q\nwant:\t%q", server, got, want)
