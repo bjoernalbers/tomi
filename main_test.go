@@ -17,19 +17,19 @@ func ServerURL() *url.URL {
 	return u
 }
 
-func TestServerString(t *testing.T) {
-	server := Server{ServerURL()}
-	want := "http://tomedo.example.com:8080/tomedo_live/"
-	if got := server.String(); got != want {
-		t.Fatalf("%#v.String():\ngot:\t%q\nwant:\t%q", server, got, want)
+func TestTomedoDownloadURL(t *testing.T) {
+	tomedo := Tomedo{ServerURL()}
+	want := "http://tomedo.example.com:8080/tomedo_live/filebyname/serverinternal/tomedo.app.tar"
+	if got := tomedo.DownloadURL(); got != want {
+		t.Fatalf("%#v.DownloadURL():\ngot:\t%q\nwant:\t%q", tomedo, got, want)
 	}
 }
 
-func TestServerTomedoDownloadURL(t *testing.T) {
-	server := Server{ServerURL()}
-	want := "http://tomedo.example.com:8080/tomedo_live/filebyname/serverinternal/tomedo.app.tar"
-	if got := server.TomedoDownloadURL(); got != want {
-		t.Fatalf("%#v.TomedoDownloadURL():\ngot:\t%q\nwant:\t%q", server, got, want)
+func TestTomedoString(t *testing.T) {
+	tomedo := Tomedo{ServerURL()}
+	want := "http://tomedo.example.com:8080/tomedo_live/"
+	if got := tomedo.String(); got != want {
+		t.Fatalf("%#v.String():\ngot:\t%q\nwant:\t%q", tomedo, got, want)
 	}
 }
 

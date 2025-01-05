@@ -42,12 +42,12 @@ func main() {
 	}
 }
 
-type Server struct {
+type Tomedo struct {
 	*url.URL
 }
 
-func (s *Server) TomedoDownloadURL() string {
-	return s.JoinPath("filebyname/serverinternal/tomedo.app.tar").String()
+func (p *Tomedo) DownloadURL() string {
+	return p.JoinPath("filebyname/serverinternal/tomedo.app.tar").String()
 }
 
 func installTomedo(serverURL *url.URL) error {
@@ -63,8 +63,8 @@ func installTomedo(serverURL *url.URL) error {
 	if _, err := os.Stat(appDir); err == nil {
 		return nil
 	}
-	server := Server{serverURL}
-	filename, err := Download(server.TomedoDownloadURL())
+	tomedo := Tomedo{serverURL}
+	filename, err := Download(tomedo.DownloadURL())
 	if err != nil {
 		return err
 	}
