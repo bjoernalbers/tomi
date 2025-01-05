@@ -18,11 +18,19 @@ Running `rm /usr/local/bin/tomi` will uninstall it again.
 
 ## Usage
 
-Just run `tomi` with your tomedo server as argument (hostname or IP addres), i.e.:
+Just run `tomi` with the URL of *your* tomedo server, i.e.:
 
 ```
-tomi tomedo.example.com
+tomi http://192.128.0.42:8080/tomedo_live/
 ```
 
 This will download the tomedo.app from your tomedo server, install it under
 `$HOME/Programme` and add it to the Dock.
+
+If tomedo clients can reach your tomedo server by its internal hostname,
+using that instead of an IP address works too:
+
+```
+tomi http://tomedo:8080/tomedo_live/
+tomi http://tomedo.example.com:8080/tomedo_live/
+```

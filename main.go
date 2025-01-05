@@ -29,11 +29,15 @@ func main() {
 		Usage()
 		os.Exit(1)
 	}
-	serverAddress := flag.Args()[0]
+	serverURL := flag.Args()[0]
 	if os.Geteuid() == 0 {
 		log.Fatal("please run as regular user, not as root or with sudo!")
 	}
-	if err := installTomedo(serverAddress); err != nil {
+	u, err := url.Parse(serverURL)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err := installTomedo(u); err != nil {
 		log.Fatalf("install tomedo: %v", err)
 	}
 }
@@ -46,7 +50,7 @@ func (s *Server) TomedoDownloadURL() string {
 	return s.JoinPath("filebyname/serverinternal/tomedo.app.tar").String()
 }
 
-func installTomedo(serverAddress string) error {
+func installTomedo(serverURL *url.URL) error {
 	home, err := GetHome()
 	if err != nil {
 		return err
@@ -59,7 +63,7 @@ func installTomedo(serverAddress string) error {
 	if _, err := os.Stat(appDir); err == nil {
 		return nil
 	}
-	server := Server{&url.URL{Scheme: "http", Host: serverAddress + ":8080", Path: "tomedo_live/"}}
+	server := Server{serverURL}
 	filename, err := Download(server.TomedoDownloadURL())
 	if err != nil {
 		return err
@@ -105,7 +109,7 @@ func CreateUserAppsDir(home string) (string, error) {
 func Usage() {
 	header := fmt.Sprintf(`tomi - the tomedo-installer (version %s)
 
-Usage: tomi <tomedo_server_address>`, version)
+Usage: tomi <tomedo_server_url>`, version)
 	fmt.Fprintln(flag.CommandLine.Output(), header)
 }
 
