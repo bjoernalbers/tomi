@@ -1,3 +1,6 @@
+all: test
+.PHONY: all
+
 release:
 	goreleaser release --clean
 .PHONY: release
