@@ -10,8 +10,8 @@ type Tomedo struct {
 	ServerURL *url.URL
 }
 
-func (p *Tomedo) DownloadURL() string {
-	return p.ServerURL.JoinPath("filebyname/serverinternal/tomedo.app.tar").String()
+func (p *Tomedo) DownloadURL() (string, error) {
+	return p.ServerURL.JoinPath("filebyname/serverinternal/tomedo.app.tar").String(), nil
 }
 
 func (p *Tomedo) Install() error {
@@ -27,7 +27,11 @@ func (p *Tomedo) Install() error {
 	if _, err := os.Stat(appDir); err == nil {
 		return nil
 	}
-	filename, err := Download(p.DownloadURL())
+	u, err := p.DownloadURL()
+	if err != nil {
+		return err
+	}
+	filename, err := Download(u)
 	if err != nil {
 		return err
 	}
