@@ -42,7 +42,7 @@ func main() {
 }
 
 func Usage() {
-	header := fmt.Sprintf(`tomi - the tomedo-installer (version %s)
+	header := fmt.Sprintf(`tomi - the missing tomedo-installer (version %s)
 
 Usage: tomi <tomedo_server_url>`, version)
 	fmt.Fprintln(flag.CommandLine.Output(), header)
