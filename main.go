@@ -37,20 +37,21 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	tomedo := Tomedo{}
-	if err := tomedo.Install(u); err != nil {
+	tomedo := Tomedo{ServerURL: u}
+	if err := tomedo.Install(); err != nil {
 		log.Fatalf("install tomedo: %v", err)
 	}
 }
 
 type Tomedo struct {
+	ServerURL *url.URL
 }
 
-func (p *Tomedo) DownloadURL(serverURL *url.URL) string {
-	return serverURL.JoinPath("filebyname/serverinternal/tomedo.app.tar").String()
+func (p *Tomedo) DownloadURL() string {
+	return p.ServerURL.JoinPath("filebyname/serverinternal/tomedo.app.tar").String()
 }
 
-func (p *Tomedo) Install(serverURL *url.URL) error {
+func (p *Tomedo) Install() error {
 	home, err := GetHome()
 	if err != nil {
 		return err
@@ -63,7 +64,7 @@ func (p *Tomedo) Install(serverURL *url.URL) error {
 	if _, err := os.Stat(appDir); err == nil {
 		return nil
 	}
-	filename, err := Download(p.DownloadURL(serverURL))
+	filename, err := Download(p.DownloadURL())
 	if err != nil {
 		return err
 	}
