@@ -8,6 +8,15 @@ import (
 	"testing"
 )
 
+func TestArzekoName(t *testing.T) {
+	arzeko := Arzeko{}
+	got := arzeko.Name()
+	want := "Arzeko.app"
+	if got != want {
+		t.Fatalf("%#v.Name()\ngot:\t%q\nwant:\t%q", arzeko, got, want)
+	}
+}
+
 func TestArzekoLatestVersionURL(t *testing.T) {
 	tests := []struct {
 		arch string

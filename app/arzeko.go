@@ -13,6 +13,10 @@ type Arzeko struct {
 	Arch      string
 }
 
+func (p *Arzeko) Name() string {
+	return "Arzeko.app"
+}
+
 // latestVersionURL returns the URL to query the download URL of the latest
 // Arzeko version.
 func (p *Arzeko) latestVersionURL() string {
