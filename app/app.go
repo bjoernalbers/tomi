@@ -9,6 +9,40 @@ import (
 	"path/filepath"
 )
 
+// App represents an App to install.
+type App interface {
+	Name() string
+	DownloadURL() (string, error)
+}
+
+// Install performs the actual app installation.
+func Install(home string, p App) error {
+	userAppsDir, err := CreateUserAppsDir(home)
+	if err != nil {
+		return err
+	}
+	appDir := filepath.Join(userAppsDir, p.Name())
+	if _, err := os.Stat(appDir); err == nil {
+		return nil
+	}
+	u, err := p.DownloadURL()
+	if err != nil {
+		return err
+	}
+	filename, err := Download(u)
+	if err != nil {
+		return err
+	}
+	defer os.Remove(filename)
+	if err := Unpack(userAppsDir, filename); err != nil {
+		return err
+	}
+	if err := AddFileToDock(appDir); err != nil {
+		return err
+	}
+	return nil
+}
+
 // CreateUserAppsDir creates a localized user application directory if missing
 // and returns its path.
 func CreateUserAppsDir(home string) (string, error) {
