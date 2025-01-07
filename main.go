@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/url"
 	"os"
+	"runtime"
 
 	"github.com/bjoernalbers/tomi/app"
 )
@@ -39,9 +40,13 @@ func main() {
 	if home == "" {
 		log.Fatalf("$HOME is not set")
 	}
-	tomedo := app.Tomedo{ServerURL: u}
-	if err := app.Install(home, &tomedo); err != nil {
-		log.Fatalf("install tomedo: %v", err)
+	apps := []app.App{}
+	apps = append(apps, &app.Tomedo{ServerURL: u})
+	apps = append(apps, &app.Arzeko{ServerURL: u, Arch: runtime.GOARCH})
+	for _, a := range apps {
+		if err := app.Install(home, a); err != nil {
+			log.Fatalf("%s: %v", a.Name(), err)
+		}
 	}
 }
 

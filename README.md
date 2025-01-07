@@ -24,8 +24,8 @@ Just run `tomi` with the URL of *your* tomedo server, i.e.:
 tomi http://192.128.0.42:8080/tomedo_live/
 ```
 
-This will download the tomedo.app from your tomedo server, install it under
-`$HOME/Programme` and add it to the Dock.
+This will download and install tomedo.app and Arzeko.app from your tomedo
+server into `$HOME/Applications` and add them to the Dock.
 
 If tomedo clients can reach your tomedo server by its internal hostname,
 using that instead of an IP address works too:
