@@ -9,6 +9,7 @@ import (
 )
 
 type Arzeko struct {
+	Home      string
 	ServerURL *url.URL
 	Arch      string
 }

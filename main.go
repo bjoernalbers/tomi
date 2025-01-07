@@ -35,7 +35,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	tomedo := app.Tomedo{ServerURL: u}
+	home := os.Getenv("HOME")
+	if home == "" {
+		log.Fatalf("$HOME is not set")
+	}
+	tomedo := app.Tomedo{Home: home, ServerURL: u}
 	if err := tomedo.Install(); err != nil {
 		log.Fatalf("install tomedo: %v", err)
 	}

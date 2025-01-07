@@ -9,16 +9,6 @@ import (
 	"path/filepath"
 )
 
-// GetHome returns the path to the user's home directory.
-// If $HOME is not set, an error is returned.
-func GetHome() (string, error) {
-	home := os.Getenv("HOME")
-	if home == "" {
-		return home, fmt.Errorf("$HOME is not set")
-	}
-	return home, nil
-}
-
 // CreateUserAppsDir creates a localized user application directory if missing
 // and returns its path.
 func CreateUserAppsDir(home string) (string, error) {
