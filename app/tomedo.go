@@ -7,7 +7,6 @@ import (
 )
 
 type Tomedo struct {
-	Home      string
 	ServerURL *url.URL
 }
 
@@ -19,8 +18,8 @@ func (p *Tomedo) DownloadURL() (string, error) {
 	return p.ServerURL.JoinPath("filebyname/serverinternal/tomedo.app.tar").String(), nil
 }
 
-func (p *Tomedo) Install() error {
-	userAppsDir, err := CreateUserAppsDir(p.Home)
+func Install(home string, p *Tomedo) error {
+	userAppsDir, err := CreateUserAppsDir(home)
 	if err != nil {
 		return err
 	}
