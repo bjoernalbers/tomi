@@ -1,7 +1,9 @@
 package app
 
 import (
+	"encoding/json"
 	"fmt"
+	"net/http"
 	"net/url"
 	"strings"
 )
@@ -23,4 +25,21 @@ func (p *Arzeko) latestVersionURL() string {
 	}
 	u.RawQuery = fmt.Sprintf("version=0.0.0&aarch=%s", arch)
 	return u.String()
+}
+
+func (p *Arzeko) DownloadURL() (string, error) {
+	errPrefix := "Arzeko download URL:"
+	resp, err := http.Get(p.latestVersionURL())
+	if err != nil {
+		return "", fmt.Errorf("%s: %v", errPrefix, err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("%s: HTTP %d %s (%s)", errPrefix, resp.StatusCode, http.StatusText(resp.StatusCode), resp.Request.URL)
+	}
+	latestVersion := struct{ URL string }{}
+	if err := json.NewDecoder(resp.Body).Decode(&latestVersion); err != nil {
+		return "", fmt.Errorf("%s: parse JSON response: %v", errPrefix, err)
+	}
+	return latestVersion.URL, nil
 }
