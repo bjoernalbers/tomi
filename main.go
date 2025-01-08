@@ -22,6 +22,7 @@ func init() {
 }
 
 func main() {
+	installArzeko := flag.Bool("A", false, "install Arzeko as well")
 	flag.Parse()
 	if len(flag.Args()) != 1 {
 		log.Println("tomedo server URL required")
@@ -42,7 +43,9 @@ func main() {
 	}
 	apps := []app.App{}
 	apps = append(apps, &app.Tomedo{ServerURL: u})
-	apps = append(apps, &app.Arzeko{ServerURL: u, Arch: runtime.GOARCH})
+	if *installArzeko {
+		apps = append(apps, &app.Arzeko{ServerURL: u, Arch: runtime.GOARCH})
+	}
 	for _, a := range apps {
 		if err := app.Install(home, a); err != nil {
 			log.Fatalf("%s: %v", a.Name(), err)
@@ -53,6 +56,9 @@ func main() {
 func Usage() {
 	header := fmt.Sprintf(`tomi - the missing tomedo-installer (version %s)
 
-Usage: tomi <tomedo_server_url>`, version)
+Usage: tomi [options] <tomedo_server_url>
+
+Options:`, version)
 	fmt.Fprintln(flag.CommandLine.Output(), header)
+	flag.PrintDefaults()
 }
