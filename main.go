@@ -24,7 +24,7 @@ func init() {
 func main() {
 	flag.Parse()
 	if len(flag.Args()) != 1 {
-		log.Println("server address missing")
+		log.Println("tomedo server URL required")
 		Usage()
 		os.Exit(1)
 	}
