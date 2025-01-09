@@ -19,7 +19,7 @@ Updates are handled by tomedo itself.
 
 First open Terminal.app and download the
 [latest release of tomi](https://github.com/bjoernalbers/tomi/releases/latest)
-with this command:
+using this command:
 
 ```
 tomi=$(mktemp) && \
@@ -29,7 +29,7 @@ tomi=$(mktemp) && \
 
 (tomi will be removed automatically on the next reboot.)
 
-To install tomedo, just `tomi` with the URL of *your* tomedo server, i.e.:
+To install tomedo, just run `tomi` with the URL of *your* tomedo server, i.e.:
 
 ```
 $tomi http://192.128.0.42:8080/tomedo_live/
