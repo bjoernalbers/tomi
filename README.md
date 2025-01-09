@@ -35,7 +35,9 @@ To install tomedo, just `tomi` with the URL of *your* tomedo server, i.e.:
 $tomi http://192.128.0.42:8080/tomedo_live/
 ```
 
-Add the option `-A` to install Arzeko as well:
+Add the option `-A` to install
+[Arzeko](https://tomedo.de/praxissoftware/praxisorganisation/)
+as well:
 
 ```
 $tomi -A http://192.128.0.42:8080/tomedo_live/
