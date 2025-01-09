@@ -3,8 +3,11 @@ package app
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
+	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -49,5 +52,78 @@ func (p *Arzeko) DownloadURL() (string, error) {
 }
 
 func (p *Arzeko) Configure(home string) error {
-	return fmt.Errorf("%T.Configure(%q) not implemented yet\n", p, home)
+	dir, err := createArzekoConfigDir(home)
+	if err != nil {
+		return err
+	}
+	file, err := os.Create(filepath.Join(dir, "usersetting.json"))
+	if err != nil {
+		return fmt.Errorf("create Arzeko config file: %v", err)
+	}
+	defer file.Close()
+	if _, err := io.Copy(file, strings.NewReader(p.userSettings())); err != nil {
+		return fmt.Errorf("create Arzeko config file: %v", err)
+	}
+	return nil
+}
+
+func (p *Arzeko) userSettings() string {
+	protocol := p.ServerURL.Scheme
+	ipAddress := p.ServerURL.Hostname()
+	httpPort := p.ServerURL.Port()
+	basePath := p.ServerURL.Path
+	basePath = strings.TrimPrefix(basePath, "/")
+	basePath = strings.TrimSuffix(basePath, "/")
+	content := fmt.Sprintf(`{
+  "protocol": "%s",
+  "authPassword": "tomedo",
+  "xApiKey": "tomedo",
+  "ipAddress": "%s",
+  "oneWaySSLPort": 9444,
+  "authPortServerTools": 9442,
+  "authPort": 9443,
+  "httpsPort": 8443,
+  "httpPort": %s,
+  "basePath": "%s",
+  "autoUpdatePath": "arzeko/latestmac?version=",
+  "calendarOptions": {
+    "weekNumbers": true,
+    "dayMaxEvents": 5,
+    "minTime": "06:00:00",
+    "maxTime": "23:00:00",
+    "printSorting": "start,title",
+    "snapDuration": "00:15:00",
+    "slotDuration": "00:30:00",
+    "allDaySlot": true,
+    "showNamesMonth": false,
+    "eventLimitWeek": 5,
+    "showNamesInsteadOfKuerzel": true,
+    "selectable": true,
+    "restorePosition": false,
+    "showAbwesenMonth": false,
+    "hiddenDays": [],
+    "showNutzerSchichtzeiten": true,
+    "showPopovers": true,
+    "pauseDuration": 0
+  },
+  "exportOptions": {
+    "abwesenExport": false,
+    "eigeneSchichtenOnly": false
+  },
+  "timezone": 1,
+  "disableUpdates": false,
+  "logLevel": "info"
+}`, protocol, ipAddress, httpPort, basePath)
+	return content
+}
+
+func createArzekoConfigDir(home string) (string, error) {
+	dir := filepath.Join(home, "Library", "Application Support", "Arzeko")
+	if _, err := os.Stat(dir); err == nil {
+		return dir, nil
+	}
+	if err := os.Mkdir(dir, 0700); err != nil {
+		return "", fmt.Errorf("create Arzeko config dir: %v", err)
+	}
+	return dir, nil
 }
