@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"net/url"
 )
 
@@ -17,5 +18,5 @@ func (p *Tomedo) DownloadURL() (string, error) {
 }
 
 func (p *Tomedo) Configure(home string) error {
-	return nil
+	return fmt.Errorf("%T.Configure(%q) not implemented yet\n", p, home)
 }

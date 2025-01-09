@@ -38,6 +38,9 @@ func Install(home string, p App) error {
 	if err := Unpack(userAppsDir, filename); err != nil {
 		return err
 	}
+	if err := p.Configure(home); err != nil {
+		return err
+	}
 	if err := AddFileToDock(appDir); err != nil {
 		return err
 	}

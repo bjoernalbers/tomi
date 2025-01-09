@@ -49,5 +49,5 @@ func (p *Arzeko) DownloadURL() (string, error) {
 }
 
 func (p *Arzeko) Configure(home string) error {
-	return nil
+	return fmt.Errorf("%T.Configure(%q) not implemented yet\n", p, home)
 }
