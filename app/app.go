@@ -13,6 +13,7 @@ import (
 type App interface {
 	Name() string
 	DownloadURL() (string, error)
+	Configure(home string) error
 }
 
 // Install performs the actual app installation.

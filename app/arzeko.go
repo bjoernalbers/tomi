@@ -47,3 +47,7 @@ func (p *Arzeko) DownloadURL() (string, error) {
 	}
 	return latestVersion.URL, nil
 }
+
+func (p *Arzeko) Configure(home string) error {
+	return nil
+}
