@@ -3,6 +3,18 @@
 Setting up [tomedo](https://tomedo.de) on a Mac is simple, but tedious.
 tomi automates this process to relieve lazy admins (like me) of some work.
 
+## Features
+
+tomi performs the following steps for the current user executing the command:
+
+1. Download the latest tomedo.app from your tomedo server
+2. Install it into `$HOME/Applications`
+3. Configure the app to connect to your tomedo server
+4. Add tomedo.app to the Dock
+
+However, tomi does nothing at all if `$HOME/Applications/tomedo.app` already exists.
+Updates are handled by tomedo itself.
+
 ## Installation
 
 To install the [latest release](https://github.com/bjoernalbers/tomi/releases/latest)
@@ -24,8 +36,6 @@ Just run `tomi` with the URL of *your* tomedo server, i.e.:
 tomi http://192.128.0.42:8080/tomedo_live/
 ```
 
-This will download and install tomedo.app from your tomedo server into
-`$HOME/Applications` and add it to the Dock.
 To install Arzeko as well, run:
 
 ```
