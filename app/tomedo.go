@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	"net/url"
+	"os/exec"
 )
 
 type Tomedo struct {
@@ -18,5 +19,9 @@ func (p *Tomedo) DownloadURL() (string, error) {
 }
 
 func (p *Tomedo) Configure(home string) error {
-	return fmt.Errorf("%T.Configure(%q) not implemented yet\n", p, home)
+	cmd := exec.Command("/usr/bin/defaults", "write", "com.zollsoft.tomedo-macOS", "ZS_ServerAdress", p.ServerURL.String())
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("%T: %v", p, err)
+	}
+	return nil
 }
