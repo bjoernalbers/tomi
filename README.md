@@ -15,37 +15,36 @@ tomi performs the following steps for the current user executing the command:
 However, tomi does nothing at all if `$HOME/Applications/tomedo.app` already exists.
 Updates are handled by tomedo itself.
 
-## Installation
-
-To install the [latest release](https://github.com/bjoernalbers/tomi/releases/latest)
-on a Mac, run this command:
-
-```
-curl -sLO https://github.com/bjoernalbers/tomi/releases/latest/download/tomi && \
-    chmod +x tomi && \
-    mv tomi /usr/local/bin
-```
-
-Running `rm /usr/local/bin/tomi` will uninstall it again.
-
 ## Usage
 
-Just run `tomi` with the URL of *your* tomedo server, i.e.:
+First open Terminal.app and download the
+[latest release of tomi](https://github.com/bjoernalbers/tomi/releases/latest)
+with this command:
 
 ```
-tomi http://192.128.0.42:8080/tomedo_live/
+tomi=$(mktemp) && \
+    curl -o $tomi -sL https://github.com/bjoernalbers/tomi/releases/latest/download/tomi && \
+    chmod +x $tomi
 ```
 
-To install Arzeko as well, run:
+(tomi will be removed automatically on the next reboot.)
+
+To install tomedo, just `tomi` with the URL of *your* tomedo server, i.e.:
 
 ```
-tomi -A http://192.128.0.42:8080/tomedo_live/
+$tomi http://192.128.0.42:8080/tomedo_live/
+```
+
+Add the option `-A` to install Arzeko as well:
+
+```
+$tomi -A http://192.128.0.42:8080/tomedo_live/
 ```
 
 If tomedo clients can reach your tomedo server by its internal hostname,
 using that instead of an IP address works too:
 
 ```
-tomi http://tomedo:8080/tomedo_live/
-tomi http://tomedo.example.com:8080/tomedo_live/
+$tomi http://tomedo:8080/tomedo_live/
+$tomi http://tomedo.example.com:8080/tomedo_live/
 ```
