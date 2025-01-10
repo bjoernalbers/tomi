@@ -48,7 +48,7 @@ func main() {
 	apps := []app.App{}
 	apps = append(apps, &app.Tomedo{ServerURL: u, InstallDir: userAppsDir})
 	if *installArzeko {
-		apps = append(apps, &app.Arzeko{ServerURL: u, Arch: runtime.GOARCH, InstallDir: userAppsDir})
+		apps = append(apps, &app.Arzeko{ServerURL: u, Arch: runtime.GOARCH, InstallDir: userAppsDir, Home: home})
 	}
 	for _, a := range apps {
 		if err := app.Install(home, a); err != nil {

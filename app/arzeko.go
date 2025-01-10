@@ -15,6 +15,7 @@ type Arzeko struct {
 	ServerURL  *url.URL
 	Arch       string
 	InstallDir string
+	Home string
 }
 
 func (p *Arzeko) Name() string {
@@ -56,8 +57,8 @@ func (p *Arzeko) DownloadURL() (string, error) {
 	return latestVersion.URL, nil
 }
 
-func (p *Arzeko) Configure(home string) error {
-	dir, err := createArzekoConfigDir(home)
+func (p *Arzeko) Configure() error {
+	dir, err := createArzekoConfigDir(p.Home)
 	if err != nil {
 		return err
 	}

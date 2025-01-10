@@ -14,7 +14,7 @@ type App interface {
 	Name() string
 	Path() string
 	DownloadURL() (string, error)
-	Configure(home string) error
+	Configure() error
 }
 
 // Install performs the actual app installation.
@@ -35,7 +35,7 @@ func Install(home string, p App) error {
 	if err := Unpack(installDir, filename); err != nil {
 		return err
 	}
-	if err := p.Configure(home); err != nil {
+	if err := p.Configure(); err != nil {
 		return err
 	}
 	if err := AddFileToDock(p.Path()); err != nil {

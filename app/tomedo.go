@@ -24,7 +24,7 @@ func (p *Tomedo) DownloadURL() (string, error) {
 	return p.ServerURL.JoinPath("filebyname/serverinternal/tomedo.app.tar").String(), nil
 }
 
-func (p *Tomedo) Configure(home string) error {
+func (p *Tomedo) Configure() error {
 	cmd := exec.Command("/usr/bin/defaults", "write", "com.zollsoft.tomedo-macOS", "ZS_ServerAdress", p.ServerURL.String())
 	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("%T: %v", p, err)
