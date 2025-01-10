@@ -105,6 +105,10 @@ func AddFileToDock(file string) error {
 	if err := exec.Command("/usr/bin/defaults", "write", "com.apple.dock", "persistent-apps", "-array-add", plist).Run(); err != nil {
 		return fmt.Errorf("add file to Dock: %q", file)
 	}
+	return RestartDock()
+}
+
+func RestartDock() error {
 	if output, err := exec.Command("/usr/bin/killall", "Dock").CombinedOutput(); err != nil {
 		return fmt.Errorf("restart Dock: %s", string(output))
 	}
