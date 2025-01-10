@@ -19,10 +19,6 @@ type App interface {
 
 // Install performs the actual app installation.
 func Install(home string, p App) error {
-	userAppsDir, err := CreateUserAppsDir(home)
-	if err != nil {
-		return err
-	}
 	if _, err := os.Stat(p.Path()); err == nil {
 		return nil
 	}
@@ -35,7 +31,8 @@ func Install(home string, p App) error {
 		return err
 	}
 	defer os.Remove(filename)
-	if err := Unpack(userAppsDir, filename); err != nil {
+	installDir := filepath.Dir(p.Path())
+	if err := Unpack(installDir, filename); err != nil {
 		return err
 	}
 	if err := p.Configure(home); err != nil {
