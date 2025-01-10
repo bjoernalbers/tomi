@@ -47,24 +47,6 @@ func Install(home string, p App) error {
 	return nil
 }
 
-// CreateUserAppsDir creates a localized user application directory if missing
-// and returns its path.
-func CreateUserAppsDir(home string) (string, error) {
-	dir := filepath.Join(home, "Applications")
-	if _, err := os.Stat(dir); err == nil {
-		return dir, nil
-	}
-	if err := os.Mkdir(dir, 0700); err != nil {
-		return "", fmt.Errorf("create user apps dir: %v", err)
-	}
-	if f, err := os.Create(filepath.Join(dir, ".localized")); err != nil {
-		return "", fmt.Errorf("localize user apps dir: %v", err)
-	} else {
-		f.Close()
-	}
-	return dir, nil
-}
-
 // Download downloads URL into temp. file and returns its filename.
 // If the download fails, an error is returned.
 func Download(url string) (filename string, err error) {
