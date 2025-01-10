@@ -41,10 +41,14 @@ func main() {
 	if home == "" {
 		log.Fatalf("$HOME is not set")
 	}
+	userAppsDir, err := app.CreateUserAppsDir(home)
+	if err != nil {
+		log.Fatal(err)
+	}
 	apps := []app.App{}
-	apps = append(apps, &app.Tomedo{ServerURL: u})
+	apps = append(apps, &app.Tomedo{ServerURL: u, InstallDir: userAppsDir})
 	if *installArzeko {
-		apps = append(apps, &app.Arzeko{ServerURL: u, Arch: runtime.GOARCH})
+		apps = append(apps, &app.Arzeko{ServerURL: u, Arch: runtime.GOARCH, InstallDir: userAppsDir})
 	}
 	for _, a := range apps {
 		if err := app.Install(home, a); err != nil {

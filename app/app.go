@@ -12,6 +12,7 @@ import (
 // App represents an App to install.
 type App interface {
 	Name() string
+	Path() string
 	DownloadURL() (string, error)
 	Configure(home string) error
 }
@@ -22,8 +23,7 @@ func Install(home string, p App) error {
 	if err != nil {
 		return err
 	}
-	appDir := filepath.Join(userAppsDir, p.Name())
-	if _, err := os.Stat(appDir); err == nil {
+	if _, err := os.Stat(p.Path()); err == nil {
 		return nil
 	}
 	u, err := p.DownloadURL()
@@ -41,7 +41,7 @@ func Install(home string, p App) error {
 	if err := p.Configure(home); err != nil {
 		return err
 	}
-	if err := AddFileToDock(appDir); err != nil {
+	if err := AddFileToDock(p.Path()); err != nil {
 		return err
 	}
 	return nil

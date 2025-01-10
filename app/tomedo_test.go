@@ -22,3 +22,11 @@ func TestTomedoDownloadURL(t *testing.T) {
 		t.Fatalf("%#v.DownloadURL():\ngot:\t%q\nwant:\t%q", tomedo, got, want)
 	}
 }
+
+func TestTomedoPath(t *testing.T) {
+	tomedo := Tomedo{InstallDir: "/foo/bar"}
+	want := "/foo/bar/tomedo.app"
+	if got := tomedo.Path(); got != want {
+		t.Fatalf("%T.Path()\ngot:\t%q\nwant:\t%q", tomedo, got, want)
+	}
+}

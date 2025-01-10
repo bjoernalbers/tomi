@@ -154,3 +154,11 @@ func TestArzekoUserSettings(t *testing.T) {
 		t.Fatalf("%T.userSettings():\ngot:\t%s\nwant:\t%s", arzeko, got, want)
 	}
 }
+
+func TestArzekoPath(t *testing.T) {
+	arzeko := Arzeko{InstallDir: "/foo/bar"}
+	want := "/foo/bar/Arzeko.app"
+	if got := arzeko.Path(); got != want {
+		t.Fatalf("%T.Path()\ngot:\t%q\nwant:\t%q", arzeko, got, want)
+	}
+}

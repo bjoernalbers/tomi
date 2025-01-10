@@ -12,12 +12,17 @@ import (
 )
 
 type Arzeko struct {
-	ServerURL *url.URL
-	Arch      string
+	ServerURL  *url.URL
+	Arch       string
+	InstallDir string
 }
 
 func (p *Arzeko) Name() string {
 	return "Arzeko.app"
+}
+
+func (p *Arzeko) Path() string {
+	return filepath.Join(p.InstallDir, p.Name())
 }
 
 // latestVersionURL returns the URL to query the download URL of the latest

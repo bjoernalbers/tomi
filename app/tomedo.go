@@ -4,14 +4,20 @@ import (
 	"fmt"
 	"net/url"
 	"os/exec"
+	"path/filepath"
 )
 
 type Tomedo struct {
-	ServerURL *url.URL
+	ServerURL  *url.URL
+	InstallDir string
 }
 
 func (p *Tomedo) Name() string {
 	return "tomedo.app"
+}
+
+func (p *Tomedo) Path() string {
+	return filepath.Join(p.InstallDir, p.Name())
 }
 
 func (p *Tomedo) DownloadURL() (string, error) {
