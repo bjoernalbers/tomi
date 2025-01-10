@@ -64,6 +64,7 @@ func main() {
 			log.Fatalf("%s: %v", a.Name(), err)
 		}
 	}
+	app.RestartDock()
 }
 
 func Usage() {
