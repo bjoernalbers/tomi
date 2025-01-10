@@ -17,9 +17,15 @@ type App interface {
 	Configure() error
 }
 
+// Exists returns true if the app exists, otherwise false.
+func Exists(a App) bool {
+	_, err := os.Stat(a.Path())
+	return err == nil
+}
+
 // Install performs the actual app installation.
 func Install(home string, p App) error {
-	if _, err := os.Stat(p.Path()); err == nil {
+	if Exists(p) {
 		return nil
 	}
 	u, err := p.DownloadURL()

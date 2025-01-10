@@ -15,7 +15,7 @@ type Arzeko struct {
 	ServerURL  *url.URL
 	Arch       string
 	InstallDir string
-	Home string
+	Home       string
 }
 
 func (p *Arzeko) Name() string {
