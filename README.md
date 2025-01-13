@@ -15,9 +15,9 @@ tomi performs the following steps for the current user executing the command:
 However, tomi does nothing at all if `$HOME/Applications/tomedo.app` already exists.
 Updates are handled by tomedo itself.
 
-## Usage
+## Installation
 
-First open Terminal.app and download the
+Open Terminal.app and download the
 [latest release of tomi](https://github.com/bjoernalbers/tomi/releases/latest)
 using this command:
 
@@ -27,9 +27,11 @@ tomi=$(mktemp) && \
     chmod +x $tomi
 ```
 
-(tomi will be removed automatically on the next reboot.)
+tomi will be removed automatically on the next reboot.
 
-Use `$tomi -h` to display the help:
+## Usage
+
+Use `$tomi -h` to show the help:
 
 ```
 $tomi -h
