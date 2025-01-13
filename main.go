@@ -26,8 +26,12 @@ func init() {
 
 func main() {
 	s := server.Default()
+	flag.StringVar(&s.Addr, "a", s.Addr, "address of tomedo server")
+	flag.StringVar(&s.Port, "p", s.Port, "port of tomedo server")
+	flag.StringVar(&s.Path, "P", s.Path, "path of tomedo server")
 	installArzeko := flag.Bool("A", false, "install Arzeko as well")
 	flag.Parse()
+	log.Fatal(s) // debug
 	if os.Geteuid() == 0 {
 		log.Fatal("please run as regular user, not as root or with sudo!")
 	}
@@ -63,8 +67,6 @@ func main() {
 
 func Usage() {
 	header := fmt.Sprintf(`tomi - the missing tomedo-installer (version %s)
-
-tomi installs tomedo from the official tomedo demo server.
 
 Usage: tomi [options]
 
