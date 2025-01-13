@@ -31,7 +31,6 @@ func main() {
 	flag.StringVar(&s.Path, "P", s.Path, "path of tomedo server")
 	installArzeko := flag.Bool("A", false, "install Arzeko as well")
 	flag.Parse()
-	log.Fatal(s) // debug
 	if os.Geteuid() == 0 {
 		log.Fatal("please run as regular user, not as root or with sudo!")
 	}
