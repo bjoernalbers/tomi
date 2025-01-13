@@ -5,7 +5,6 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"os/exec"
 	"path/filepath"
 
 	"github.com/bjoernalbers/tomi/macos"
@@ -31,7 +30,7 @@ func Install(p App, dock *macos.Dock) error {
 	}
 	defer os.Remove(filename)
 	installDir := filepath.Dir(p.Path())
-	if err := Unpack(installDir, filename); err != nil {
+	if err := macos.Unpack(installDir, filename); err != nil {
 		return err
 	}
 	if err := p.Configure(); err != nil {
@@ -63,15 +62,4 @@ func Download(url string) (filename string, err error) {
 		return filename, fmt.Errorf("copy download to temp. file: %v", err)
 	}
 	return tempFile.Name(), nil
-}
-
-// Unpack extracts content from archive file into dir.
-// The archive is extracted using the macOS tar command which can handle many
-// different archive formats including tar and zip (see "man tar").
-func Unpack(dir, file string) error {
-	cmd := exec.Command("/usr/bin/tar", "-x", "-f", file, "-C", dir)
-	if output, err := cmd.CombinedOutput(); err != nil {
-		return fmt.Errorf("unpack: %s", string(output))
-	}
-	return nil
 }

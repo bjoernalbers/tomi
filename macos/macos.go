@@ -58,3 +58,14 @@ func (d *Dock) Restart() error {
 func (d *Dock) Changed() bool {
 	return d.changed
 }
+
+// Unpack extracts content from archive file into dir.
+// The archive is extracted using the macOS tar command which can handle many
+// different archive formats including tar and zip (see "man tar").
+func Unpack(dir, file string) error {
+	cmd := exec.Command("/usr/bin/tar", "-x", "-f", file, "-C", dir)
+	if output, err := cmd.CombinedOutput(); err != nil {
+		return fmt.Errorf("unpack: %s", string(output))
+	}
+	return nil
+}
