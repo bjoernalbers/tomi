@@ -14,6 +14,7 @@ import (
 type App interface {
 	Name() string
 	Path() string
+	Dir() string
 	DownloadURL() (string, error)
 	Configure() error
 }
@@ -29,8 +30,7 @@ func Install(p App, dock *macos.Dock) error {
 		return err
 	}
 	defer os.Remove(filename)
-	installDir := filepath.Dir(p.Path())
-	if err := macos.Unpack(installDir, filename); err != nil {
+	if err := macos.Unpack(p.Dir(), filename); err != nil {
 		return err
 	}
 	if err := p.Configure(); err != nil {
