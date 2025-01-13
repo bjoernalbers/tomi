@@ -16,6 +16,8 @@ import (
 // version gets set via ldflags
 var version = "unset"
 
+const DefaultServerURL = "http://allgemeinmedizin.demo.tomedo.org:8080/tomedo_live/"
+
 func init() {
 	log.SetFlags(0)
 	log.SetPrefix("tomi: ")
@@ -23,20 +25,14 @@ func init() {
 }
 
 func main() {
-	installArzeko := flag.Bool("A", false, "install Arzeko as well")
-	flag.Parse()
-	if len(flag.Args()) != 1 {
-		log.Println("tomedo server URL required")
-		Usage()
-		os.Exit(1)
-	}
-	serverURL := flag.Args()[0]
-	if os.Geteuid() == 0 {
-		log.Fatal("please run as regular user, not as root or with sudo!")
-	}
-	u, err := url.Parse(serverURL)
+	serverURL, err := url.Parse(DefaultServerURL)
 	if err != nil {
 		log.Fatal(err)
+	}
+	installArzeko := flag.Bool("A", false, "install Arzeko as well")
+	flag.Parse()
+	if os.Geteuid() == 0 {
+		log.Fatal("please run as regular user, not as root or with sudo!")
 	}
 	home := os.Getenv("HOME")
 	if home == "" {
@@ -47,12 +43,12 @@ func main() {
 		log.Fatal(err)
 	}
 	apps := []app.App{}
-	tomedo := &app.Tomedo{ServerURL: u, InstallDir: userAppsDir}
+	tomedo := &app.Tomedo{ServerURL: serverURL, InstallDir: userAppsDir}
 	if !app.Exists(tomedo) {
 		apps = append(apps, tomedo)
 	}
 	if *installArzeko {
-		arzeko := &app.Arzeko{ServerURL: u, Arch: runtime.GOARCH, InstallDir: userAppsDir, Home: home}
+		arzeko := &app.Arzeko{ServerURL: serverURL, Arch: runtime.GOARCH, InstallDir: userAppsDir, Home: home}
 		if !app.Exists(arzeko) {
 			apps = append(apps, arzeko)
 		}
@@ -71,7 +67,9 @@ func main() {
 func Usage() {
 	header := fmt.Sprintf(`tomi - the missing tomedo-installer (version %s)
 
-Usage: tomi [options] <tomedo_server_url>
+tomi installs tomedo from the official tomedo demo server.
+
+Usage: tomi [options]
 
 Options:`, version)
 	fmt.Fprintln(flag.CommandLine.Output(), header)
