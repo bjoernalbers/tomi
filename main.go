@@ -43,13 +43,21 @@ func main() {
 		log.Fatal(err)
 	}
 	apps := []app.App{}
-	tomedo := &app.Tomedo{ServerURL: s.URL(), InstallDir: userAppsDir}
-	if !app.Exists(tomedo) {
+	tomedo := &app.Tomedo{
+		ServerURL: s.URL(),
+		App:       macos.App{Path: filepath.Join(userAppsDir, "tomedo.app")},
+	}
+	if !tomedo.Exists() {
 		apps = append(apps, tomedo)
 	}
 	if *installArzeko {
-		arzeko := &app.Arzeko{ServerURL: s.URL(), Arch: runtime.GOARCH, InstallDir: userAppsDir, Home: home}
-		if !app.Exists(arzeko) {
+		arzeko := &app.Arzeko{
+			ServerURL: s.URL(),
+			Arch:      runtime.GOARCH,
+			App:       macos.App{Path: filepath.Join(userAppsDir, "Arzeko.app")},
+			Home:      home,
+		}
+		if !arzeko.Exists() {
 			apps = append(apps, arzeko)
 		}
 	}

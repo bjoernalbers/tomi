@@ -19,12 +19,6 @@ type App interface {
 	Configure() error
 }
 
-// Exists returns true if the app exists, otherwise false.
-func Exists(a App) bool {
-	_, err := os.Stat(a.Path())
-	return err == nil
-}
-
 // Install performs the actual app installation.
 func Install(p App, dock *macos.Dock) error {
 	u, err := p.DownloadURL()

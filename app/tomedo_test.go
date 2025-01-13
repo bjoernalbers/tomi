@@ -4,6 +4,7 @@ import "testing"
 
 func TestTomedoName(t *testing.T) {
 	tomedo := Tomedo{}
+	tomedo.App.Path = "/Users/gopher/Applications/tomedo.app"
 	got := tomedo.Name()
 	want := "tomedo.app"
 	if got != want {
@@ -24,7 +25,8 @@ func TestTomedoDownloadURL(t *testing.T) {
 }
 
 func TestTomedoPath(t *testing.T) {
-	tomedo := Tomedo{InstallDir: "/foo/bar"}
+	tomedo := Tomedo{}
+	tomedo.App.Path = "/foo/bar/tomedo.app"
 	want := "/foo/bar/tomedo.app"
 	if got := tomedo.Path(); got != want {
 		t.Fatalf("%T.Path()\ngot:\t%q\nwant:\t%q", tomedo, got, want)

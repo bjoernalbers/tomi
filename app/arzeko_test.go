@@ -10,6 +10,7 @@ import (
 
 func TestArzekoName(t *testing.T) {
 	arzeko := Arzeko{}
+	arzeko.App.Path = "/Users/gopher/Applications/Arzeko.app"
 	got := arzeko.Name()
 	want := "Arzeko.app"
 	if got != want {
@@ -156,7 +157,8 @@ func TestArzekoUserSettings(t *testing.T) {
 }
 
 func TestArzekoPath(t *testing.T) {
-	arzeko := Arzeko{InstallDir: "/foo/bar"}
+	arzeko := Arzeko{}
+	arzeko.App.Path = "/foo/bar/Arzeko.app"
 	want := "/foo/bar/Arzeko.app"
 	if got := arzeko.Path(); got != want {
 		t.Fatalf("%T.Path()\ngot:\t%q\nwant:\t%q", arzeko, got, want)

@@ -9,21 +9,19 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/bjoernalbers/tomi/macos"
 )
 
 type Arzeko struct {
-	ServerURL  *url.URL
-	Arch       string
-	InstallDir string
-	Home       string
-}
-
-func (p *Arzeko) Name() string {
-	return "Arzeko.app"
+	macos.App
+	ServerURL *url.URL
+	Arch      string
+	Home      string
 }
 
 func (p *Arzeko) Path() string {
-	return filepath.Join(p.InstallDir, p.Name())
+	return p.App.Path
 }
 
 // latestVersionURL returns the URL to query the download URL of the latest
