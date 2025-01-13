@@ -61,9 +61,6 @@ func main() {
 			apps = append(apps, arzeko)
 		}
 	}
-	if len(apps) == 0 {
-		os.Exit(0)
-	}
 	for _, a := range apps {
 		if err := app.Install(a, dock); err != nil {
 			log.Fatalf("%s: %v", a.Name(), err)
