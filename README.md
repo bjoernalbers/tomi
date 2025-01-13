@@ -5,15 +5,14 @@ tomi automates this process to relieve lazy admins (like me) of some work.
 
 ## Features
 
-tomi performs the following steps for the current user executing the command:
+tomi performs the following steps for the current user:
 
-1. Download the latest tomedo.app from the tomedo server
-2. Install it into `$HOME/Applications`
-3. Configure the app to connect to the tomedo server
-4. Add tomedo.app to the Dock
+1. Download tomedo.app from tomedo server and install into `$HOME/Applications`
+2. Configure tomedo.app to connect to tomedo server
+3. Add tomedo.app to Dock
 
-However, tomi does nothing at all if `$HOME/Applications/tomedo.app` already exists.
-Updates are handled by tomedo itself.
+Updates are handled by tomedo itself, so tomi does nothing at all if
+`$HOME/Applications/tomedo.app` already exists.
 
 ## Installation
 
