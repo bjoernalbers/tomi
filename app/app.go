@@ -7,6 +7,8 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+
+	"github.com/bjoernalbers/tomi/macos"
 )
 
 // App represents an App to install.
@@ -24,7 +26,7 @@ func Exists(a App) bool {
 }
 
 // Install performs the actual app installation.
-func Install(p App) error {
+func Install(p App, dock *macos.Dock) error {
 	u, err := p.DownloadURL()
 	if err != nil {
 		return err
@@ -41,7 +43,7 @@ func Install(p App) error {
 	if err := p.Configure(); err != nil {
 		return err
 	}
-	if err := AddFileToDock(p.Path()); err != nil {
+	if err := dock.Add(p.Path()); err != nil {
 		return err
 	}
 	return nil
@@ -76,23 +78,6 @@ func Unpack(dir, file string) error {
 	cmd := exec.Command("/usr/bin/tar", "-x", "-f", file, "-C", dir)
 	if output, err := cmd.CombinedOutput(); err != nil {
 		return fmt.Errorf("unpack: %s", string(output))
-	}
-	return nil
-}
-
-// AddFileToDock adds the file to the macOS Dock.
-func AddFileToDock(file string) error {
-	// https://stackoverflow.com/questions/66106001/add-files-to-dock-on-macos-using-the-command-line
-	plist := fmt.Sprintf("<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file://%s/</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>", file)
-	if err := exec.Command("/usr/bin/defaults", "write", "com.apple.dock", "persistent-apps", "-array-add", plist).Run(); err != nil {
-		return fmt.Errorf("add file to Dock: %q", file)
-	}
-	return nil
-}
-
-func RestartDock() error {
-	if output, err := exec.Command("/usr/bin/killall", "Dock").CombinedOutput(); err != nil {
-		return fmt.Errorf("restart Dock: %s", string(output))
 	}
 	return nil
 }

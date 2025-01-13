@@ -10,6 +10,7 @@ import (
 	"runtime"
 
 	"github.com/bjoernalbers/tomi/app"
+	"github.com/bjoernalbers/tomi/macos"
 	"github.com/bjoernalbers/tomi/server"
 )
 
@@ -23,6 +24,7 @@ func init() {
 }
 
 func main() {
+	dock := &macos.Dock{}
 	s := server.Default()
 	flag.StringVar(&s.Addr, "a", s.Addr, "address of tomedo server")
 	flag.StringVar(&s.Port, "p", s.Port, "port of tomedo server")
@@ -55,11 +57,13 @@ func main() {
 		os.Exit(0)
 	}
 	for _, a := range apps {
-		if err := app.Install(a); err != nil {
+		if err := app.Install(a, dock); err != nil {
 			log.Fatalf("%s: %v", a.Name(), err)
 		}
 	}
-	app.RestartDock()
+	if dock.Changed() {
+		dock.Restart()
+	}
 }
 
 func Usage() {
