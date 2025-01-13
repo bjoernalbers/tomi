@@ -5,12 +5,12 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"net/url"
 	"os"
 	"path/filepath"
 	"runtime"
 
 	"github.com/bjoernalbers/tomi/app"
+	"github.com/bjoernalbers/tomi/server"
 )
 
 // version gets set via ldflags
@@ -25,10 +25,7 @@ func init() {
 }
 
 func main() {
-	serverURL, err := url.Parse(DefaultServerURL)
-	if err != nil {
-		log.Fatal(err)
-	}
+	s := server.Default()
 	installArzeko := flag.Bool("A", false, "install Arzeko as well")
 	flag.Parse()
 	if os.Geteuid() == 0 {
@@ -43,12 +40,12 @@ func main() {
 		log.Fatal(err)
 	}
 	apps := []app.App{}
-	tomedo := &app.Tomedo{ServerURL: serverURL, InstallDir: userAppsDir}
+	tomedo := &app.Tomedo{ServerURL: s.URL(), InstallDir: userAppsDir}
 	if !app.Exists(tomedo) {
 		apps = append(apps, tomedo)
 	}
 	if *installArzeko {
-		arzeko := &app.Arzeko{ServerURL: serverURL, Arch: runtime.GOARCH, InstallDir: userAppsDir, Home: home}
+		arzeko := &app.Arzeko{ServerURL: s.URL(), Arch: runtime.GOARCH, InstallDir: userAppsDir, Home: home}
 		if !app.Exists(arzeko) {
 			apps = append(apps, arzeko)
 		}
