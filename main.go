@@ -16,8 +16,6 @@ import (
 // version gets set via ldflags
 var version = "unset"
 
-const DefaultServerURL = "http://allgemeinmedizin.demo.tomedo.org:8080/tomedo_live/"
-
 func init() {
 	log.SetFlags(0)
 	log.SetPrefix("tomi: ")
