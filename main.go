@@ -43,25 +43,22 @@ func main() {
 		log.Fatal(err)
 	}
 	apps := []app.App{}
-	tomedo := &app.Tomedo{
+	apps = append(apps, &app.Tomedo{
 		ServerURL: s.URL(),
 		App:       macos.App{Path: filepath.Join(userAppsDir, "tomedo.app")},
-	}
-	if !tomedo.Exists() {
-		apps = append(apps, tomedo)
-	}
+	})
 	if *installArzeko {
-		arzeko := &app.Arzeko{
+		apps = append(apps, &app.Arzeko{
 			ServerURL: s.URL(),
 			Arch:      runtime.GOARCH,
 			App:       macos.App{Path: filepath.Join(userAppsDir, "Arzeko.app")},
 			Home:      home,
-		}
-		if !arzeko.Exists() {
-			apps = append(apps, arzeko)
-		}
+		})
 	}
 	for _, a := range apps {
+		if a.Exists() {
+			continue
+		}
 		if err := app.Install(a, dock); err != nil {
 			log.Fatalf("%s: %v", a.Name(), err)
 		}

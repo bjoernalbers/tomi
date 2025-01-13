@@ -15,6 +15,7 @@ type App interface {
 	Name() string
 	Path() string
 	Dir() string
+	Exists() bool
 	DownloadURL() (string, error)
 	Configure() error
 }
