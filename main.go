@@ -59,7 +59,10 @@ func main() {
 		if a.Exists() {
 			continue
 		}
-		if err := app.Install(a, dock); err != nil {
+		if err := app.Install(a); err != nil {
+			log.Fatalf("%s: %v", a.Name(), err)
+		}
+		if err := dock.Add(a.Path()); err != nil {
 			log.Fatalf("%s: %v", a.Name(), err)
 		}
 	}

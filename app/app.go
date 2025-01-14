@@ -21,7 +21,7 @@ type App interface {
 }
 
 // Install performs the actual app installation.
-func Install(p App, dock *macos.Dock) error {
+func Install(p App) error {
 	u, err := p.DownloadURL()
 	if err != nil {
 		return err
@@ -35,9 +35,6 @@ func Install(p App, dock *macos.Dock) error {
 		return err
 	}
 	if err := p.Configure(); err != nil {
-		return err
-	}
-	if err := dock.Add(p.Path()); err != nil {
 		return err
 	}
 	return nil
