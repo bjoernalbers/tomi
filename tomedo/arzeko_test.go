@@ -71,12 +71,12 @@ func TestArzekoURLString(t *testing.T) {
 }
 
 func TestArzekoUserSettings(t *testing.T) {
-	arzeko := Arzeko{ServerURL: ServerURL()}
+	arzeko := Arzeko{ServerURL: DefaultServer().URL()}
 	want := `{
   "protocol": "http",
   "authPassword": "tomedo",
   "xApiKey": "tomedo",
-  "ipAddress": "tomedo.example.com",
+  "ipAddress": "allgemeinmedizin.demo.tomedo.org",
   "oneWaySSLPort": 9444,
   "authPortServerTools": 9442,
   "authPort": 9443,
