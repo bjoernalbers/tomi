@@ -5,7 +5,10 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"regexp"
 	"testing"
+
+	"github.com/bjoernalbers/tomi/server"
 )
 
 func TestArzekoName(t *testing.T) {
@@ -162,5 +165,67 @@ func TestArzekoPath(t *testing.T) {
 	want := "/foo/bar/Arzeko.app"
 	if got := arzeko.Path(); got != want {
 		t.Fatalf("%T.Path()\ngot:\t%q\nwant:\t%q", arzeko, got, want)
+	}
+}
+
+func TestArzekoDownloaderAutoUpdateURL(t *testing.T) {
+	tests := []struct {
+		arch string
+		want string
+	}{
+		{
+			"",
+			"http://allgemeinmedizin.demo.tomedo.org:8080/tomedo_live/arzeko/latestmac?version=0.0.0&aarch=intel",
+		},
+		{
+			"intel",
+			"http://allgemeinmedizin.demo.tomedo.org:8080/tomedo_live/arzeko/latestmac?version=0.0.0&aarch=intel",
+		},
+		{
+			"x86_64",
+			"http://allgemeinmedizin.demo.tomedo.org:8080/tomedo_live/arzeko/latestmac?version=0.0.0&aarch=intel",
+		},
+		{
+			"amd64",
+			"http://allgemeinmedizin.demo.tomedo.org:8080/tomedo_live/arzeko/latestmac?version=0.0.0&aarch=intel",
+		},
+		{
+			"arm",
+			"http://allgemeinmedizin.demo.tomedo.org:8080/tomedo_live/arzeko/latestmac?version=0.0.0&aarch=arm",
+		},
+		{
+			"arm64",
+			"http://allgemeinmedizin.demo.tomedo.org:8080/tomedo_live/arzeko/latestmac?version=0.0.0&aarch=arm",
+		},
+	}
+	for _, tt := range tests {
+		d := arzekoDownloader{ServerURL: server.Default().URL(), Arch: tt.arch}
+		if got := d.AutoUpdateURL(); got != tt.want {
+			t.Errorf("%v.AutoUpdateURL():\ngot:\t%q\nwant:\t%q", d, got, tt.want)
+		}
+	}
+}
+
+func TestArzekoDownloaderURL(t *testing.T) {
+	d := arzekoDownloader{ServerURL: server.Default().URL()}
+	want := regexp.MustCompile(`http://allgemeinmedizin.demo.tomedo.org:8080/tomedo_live/filebyname/serverinternalzip/arzeko/Arzeko-\d+.\d+.\d+-mac.zip`)
+	got, err := d.URL()
+	if err != nil {
+		t.Fatalf("%T.URL(): error = %v", d, err)
+	}
+	if !want.MatchString(got) {
+		t.Fatalf("%T.URL():\ngot:\t%q\nwant:\t%q", d, got, want)
+	}
+}
+
+func TestArzekoDownloaderGet(t *testing.T) {
+	d := arzekoDownloader{ServerURL: server.Default().URL()}
+	resp, err := d.Get()
+	if err != nil {
+		t.Fatalf("%T.Get(): error = %v", d, err)
+	}
+	defer resp.Body.Close()
+	if got, want := resp.StatusCode, http.StatusOK; got != want {
+		t.Fatalf("%T.Get(): HTTP Status = %d, want: %d", d, got, want)
 	}
 }

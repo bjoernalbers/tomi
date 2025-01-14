@@ -13,6 +13,66 @@ import (
 	"github.com/bjoernalbers/tomi/macos"
 )
 
+type arzekoDownloader struct {
+	ServerURL *url.URL
+	Arch      string
+}
+
+func (d *arzekoDownloader) Get() (*http.Response, error) {
+	u, err := d.URL()
+	if err != nil {
+		return nil, err
+	}
+	resp, err := http.Get(u)
+	if err != nil {
+		return nil, fmt.Errorf("%T: %v", d, err)
+	}
+	return resp, nil
+}
+
+func (d *arzekoDownloader) URL() (string, error) {
+	resp, err := http.Get(d.AutoUpdateURL())
+	if err != nil {
+		return "", fmt.Errorf("%T: %v", d, err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("%T: HTTP %d %s (%s)", d, resp.StatusCode, http.StatusText(resp.StatusCode), resp.Request.URL)
+	}
+	latestVersion := struct{ URL string }{}
+	if err := json.NewDecoder(resp.Body).Decode(&latestVersion); err != nil {
+		return "", fmt.Errorf("%T: parse JSON response: %v", d, err)
+	}
+	return d.replaceHost(latestVersion.URL)
+}
+
+func (d *arzekoDownloader) AutoUpdateURL() string {
+	u := d.ServerURL.JoinPath("arzeko/latestmac")
+	// Arzeko itself queries latest version with "aarch=intel" on
+	// Intel-based Macs and "aarch=arm" on Apple Silicon.
+	arch := "intel"
+	if strings.HasPrefix(d.Arch, "arm") {
+		arch = "arm"
+	}
+	u.RawQuery = fmt.Sprintf("version=0.0.0&aarch=%s", arch)
+	return u.String()
+}
+
+// replaceHost replaces the host in given download URL by the server host,
+// because the tomedo demo server returns unreachable download URLs containing
+// localhost:
+//
+// $ curl 'http://allgemeinmedizin.demo.tomedo.org:8080/tomedo_live/arzeko/latestmac?version=0.0.0'
+// {"url":"http://127.0.0.1:9901/tomedo_live/filebyname/serverinternalzip/arzeko/Arzeko-1.146.6-mac.zip","name":"1.146.6","notes":"Aarch: null","pub_date":null}%
+func (d *arzekoDownloader) replaceHost(downloadURL string) (string, error) {
+	u, err := url.Parse(downloadURL)
+	if err != nil {
+		return "", fmt.Errorf("%T: replace host: %v", d, err)
+	}
+	u.Host = d.ServerURL.Host
+	return u.String(), nil
+}
+
 type Arzeko struct {
 	macos.App
 	ServerURL *url.URL
