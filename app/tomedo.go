@@ -8,15 +8,6 @@ import (
 	"github.com/bjoernalbers/tomi/macos"
 )
 
-type tomedoURL struct {
-	ServerURL *url.URL
-}
-
-// String returns the download URL of tomedo.
-func (u *tomedoURL) String() string {
-	return u.ServerURL.JoinPath("filebyname/serverinternal/tomedo.app.tar").String()
-}
-
 type Tomedo struct {
 	macos.App
 	ServerURL *url.URL
@@ -27,8 +18,7 @@ func (p *Tomedo) Path() string {
 }
 
 func (p *Tomedo) DownloadURL() (string, error) {
-	u := &tomedoURL{p.ServerURL}
-	return u.String(), nil
+	return tomedoURL(p.ServerURL), nil
 }
 
 func (p *Tomedo) Configure() error {
@@ -37,4 +27,9 @@ func (p *Tomedo) Configure() error {
 		return fmt.Errorf("%T: %v", p, err)
 	}
 	return nil
+}
+
+// tomedoURL returns the download URL of tomedo.
+func tomedoURL(serverURL *url.URL) string {
+	return serverURL.JoinPath("filebyname/serverinternal/tomedo.app.tar").String()
 }

@@ -26,9 +26,9 @@ func TestTomedoPath(t *testing.T) {
 }
 
 func TestTomedoURL(t *testing.T) {
-	u := tomedoURL{server.Default().URL()}
+	got := tomedoURL(server.Default().URL())
 	want := "http://allgemeinmedizin.demo.tomedo.org:8080/tomedo_live/filebyname/serverinternal/tomedo.app.tar"
-	if got := u.String(); got != want {
-		t.Fatalf("%T.String():\ngot:\t%q\nwant:\t%q", u, got, want)
+	if got != want {
+		t.Fatalf("tomedoURL():\ngot:\t%q\nwant:\t%q", got, want)
 	}
 }
