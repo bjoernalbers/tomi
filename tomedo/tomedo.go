@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
+	"path/filepath"
 
 	"github.com/bjoernalbers/tomi/macos"
 )
@@ -13,10 +14,9 @@ import (
 type App interface {
 	Name() string
 	Path() string
-	Dir() string
 	Exists() bool
-	Configure() error
 	Install() error
+	Configure() error
 }
 
 // install downloads the URL and unpacks it into dir.
@@ -33,16 +33,24 @@ func install(dir, url string) error {
 }
 
 type Tomedo struct {
-	macos.App
+	Dir       string
 	ServerURL *url.URL
 }
 
-func (p *Tomedo) Install() error {
-	return install(p.Dir(), tomedoURL(p.ServerURL))
+func (p *Tomedo) Name() string {
+	return "tomedo.app"
 }
 
 func (p *Tomedo) Path() string {
-	return p.App.Path
+	return join(p.Dir, p.Name())
+}
+
+func (p *Tomedo) Exists() bool {
+	return exists(p)
+}
+
+func (p *Tomedo) Install() error {
+	return install(p.Dir, tomedoURL(p.ServerURL))
 }
 
 func (p *Tomedo) Configure() error {
@@ -51,6 +59,17 @@ func (p *Tomedo) Configure() error {
 		return fmt.Errorf("%T: %v", p, err)
 	}
 	return nil
+}
+
+// exists returns true if the app exists, otherwise false.
+func exists(a App) bool {
+	_, err := os.Stat(a.Path())
+	return err == nil
+}
+
+// join joins dir and name.
+func join(dir, name string) string {
+	return filepath.Join(dir, name)
 }
 
 // tomedoURL returns the download URL of tomedo.

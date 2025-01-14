@@ -16,21 +16,17 @@ func ServerURL() *url.URL {
 }
 
 func TestTomedoName(t *testing.T) {
-	tomedo := Tomedo{}
-	tomedo.App.Path = "/Users/gopher/Applications/tomedo.app"
-	got := tomedo.Name()
-	want := "tomedo.app"
-	if got != want {
-		t.Fatalf("%#v.Name()\ngot:\t%q\nwant:\t%q", tomedo, got, want)
+	app := Tomedo{}
+	if got, want := app.Name(), "tomedo.app"; got != want {
+		t.Fatalf("%#v.Name()\ngot:\t%q\nwant:\t%q", app, got, want)
 	}
 }
 
 func TestTomedoPath(t *testing.T) {
-	tomedo := Tomedo{}
-	tomedo.App.Path = "/foo/bar/tomedo.app"
-	want := "/foo/bar/tomedo.app"
-	if got := tomedo.Path(); got != want {
-		t.Fatalf("%T.Path()\ngot:\t%q\nwant:\t%q", tomedo, got, want)
+	app := Tomedo{Dir: "/Users/gopher/Applications"}
+	want := "/Users/gopher/Applications/tomedo.app"
+	if got := app.Path(); got != want {
+		t.Fatalf("%T.Path()\ngot:\t%q\nwant:\t%q", app, got, want)
 	}
 }
 

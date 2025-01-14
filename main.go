@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"path/filepath"
 	"runtime"
 
 	"github.com/bjoernalbers/tomi/macos"
@@ -43,14 +42,14 @@ func main() {
 	}
 	apps := []tomedo.App{}
 	apps = append(apps, &tomedo.Tomedo{
+		Dir:       userAppsDir,
 		ServerURL: server.URL(),
-		App:       macos.App{Path: filepath.Join(userAppsDir, "tomedo.app")},
 	})
 	if *installArzeko {
 		apps = append(apps, &tomedo.Arzeko{
+			Dir:       userAppsDir,
 			ServerURL: server.URL(),
 			Arch:      runtime.GOARCH,
-			App:       macos.App{Path: filepath.Join(userAppsDir, "Arzeko.app")},
 			Home:      home,
 		})
 	}

@@ -9,8 +9,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-
-	"github.com/bjoernalbers/tomi/macos"
 )
 
 type arzekoURL struct {
@@ -65,10 +63,22 @@ func (d *arzekoURL) replaceHost(downloadURL string) (string, error) {
 }
 
 type Arzeko struct {
-	macos.App
+	Dir       string
 	ServerURL *url.URL
 	Arch      string
 	Home      string
+}
+
+func (p *Arzeko) Name() string {
+	return "Arzeko.app"
+}
+
+func (p *Arzeko) Path() string {
+	return join(p.Dir, p.Name())
+}
+
+func (p *Arzeko) Exists() bool {
+	return exists(p)
 }
 
 func (p *Arzeko) Install() error {
@@ -76,11 +86,7 @@ func (p *Arzeko) Install() error {
 	if err != nil {
 		return err
 	}
-	return install(p.Dir(), u)
-}
-
-func (p *Arzeko) Path() string {
-	return p.App.Path
+	return install(p.Dir, u)
 }
 
 func (p *Arzeko) Configure() error {

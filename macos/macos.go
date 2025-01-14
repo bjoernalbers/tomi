@@ -9,27 +9,6 @@ import (
 	"path/filepath"
 )
 
-// App represents a macOS app by its path, i.e. "/Applications/Firefox.app".
-type App struct {
-	Path string
-}
-
-// Exists returns true if the app exists, otherwise false.
-func (a *App) Exists() bool {
-	_, err := os.Stat(a.Path)
-	return err == nil
-}
-
-// Name returns the basename of the App, i.e. "Firefox.app".
-func (a *App) Name() string {
-	return filepath.Base(a.Path)
-}
-
-// Dir returns the parent directory of the App.
-func (a *App) Dir() string {
-	return filepath.Dir(a.Path)
-}
-
 // Dock represents the Dock on macOS.
 type Dock struct {
 	changed bool

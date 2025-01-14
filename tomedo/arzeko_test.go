@@ -6,68 +6,17 @@ import (
 )
 
 func TestArzekoName(t *testing.T) {
-	arzeko := Arzeko{}
-	arzeko.App.Path = "/Users/gopher/Applications/Arzeko.app"
-	got := arzeko.Name()
-	want := "Arzeko.app"
-	if got != want {
-		t.Fatalf("%#v.Name()\ngot:\t%q\nwant:\t%q", arzeko, got, want)
-	}
-}
-
-func TestArzekoUserSettings(t *testing.T) {
-	arzeko := Arzeko{ServerURL: ServerURL()}
-	want := `{
-  "protocol": "http",
-  "authPassword": "tomedo",
-  "xApiKey": "tomedo",
-  "ipAddress": "tomedo.example.com",
-  "oneWaySSLPort": 9444,
-  "authPortServerTools": 9442,
-  "authPort": 9443,
-  "httpsPort": 8443,
-  "httpPort": 8080,
-  "basePath": "tomedo_live",
-  "autoUpdatePath": "arzeko/latestmac?version=",
-  "calendarOptions": {
-    "weekNumbers": true,
-    "dayMaxEvents": 5,
-    "minTime": "06:00:00",
-    "maxTime": "23:00:00",
-    "printSorting": "start,title",
-    "snapDuration": "00:15:00",
-    "slotDuration": "00:30:00",
-    "allDaySlot": true,
-    "showNamesMonth": false,
-    "eventLimitWeek": 5,
-    "showNamesInsteadOfKuerzel": true,
-    "selectable": true,
-    "restorePosition": false,
-    "showAbwesenMonth": false,
-    "hiddenDays": [],
-    "showNutzerSchichtzeiten": true,
-    "showPopovers": true,
-    "pauseDuration": 0
-  },
-  "exportOptions": {
-    "abwesenExport": false,
-    "eigeneSchichtenOnly": false
-  },
-  "timezone": 1,
-  "disableUpdates": false,
-  "logLevel": "info"
-}`
-	if got := arzeko.userSettings(); got != want {
-		t.Fatalf("%T.userSettings():\ngot:\t%s\nwant:\t%s", arzeko, got, want)
+	app := Arzeko{}
+	if got, want := app.Name(), "Arzeko.app"; got != want {
+		t.Fatalf("%#v.Name()\ngot:\t%q\nwant:\t%q", app, got, want)
 	}
 }
 
 func TestArzekoPath(t *testing.T) {
-	arzeko := Arzeko{}
-	arzeko.App.Path = "/foo/bar/Arzeko.app"
-	want := "/foo/bar/Arzeko.app"
-	if got := arzeko.Path(); got != want {
-		t.Fatalf("%T.Path()\ngot:\t%q\nwant:\t%q", arzeko, got, want)
+	app := Arzeko{Dir: "/Users/gopher/Applications"}
+	want := "/Users/gopher/Applications/Arzeko.app"
+	if got := app.Path(); got != want {
+		t.Fatalf("%T.Path()\ngot:\t%q\nwant:\t%q", app, got, want)
 	}
 }
 
@@ -118,5 +67,52 @@ func TestArzekoURLString(t *testing.T) {
 	}
 	if !want.MatchString(got) {
 		t.Fatalf("%T.String():\ngot:\t%q\nwant:\t%q", u, got, want)
+	}
+}
+
+func TestArzekoUserSettings(t *testing.T) {
+	arzeko := Arzeko{ServerURL: ServerURL()}
+	want := `{
+  "protocol": "http",
+  "authPassword": "tomedo",
+  "xApiKey": "tomedo",
+  "ipAddress": "tomedo.example.com",
+  "oneWaySSLPort": 9444,
+  "authPortServerTools": 9442,
+  "authPort": 9443,
+  "httpsPort": 8443,
+  "httpPort": 8080,
+  "basePath": "tomedo_live",
+  "autoUpdatePath": "arzeko/latestmac?version=",
+  "calendarOptions": {
+    "weekNumbers": true,
+    "dayMaxEvents": 5,
+    "minTime": "06:00:00",
+    "maxTime": "23:00:00",
+    "printSorting": "start,title",
+    "snapDuration": "00:15:00",
+    "slotDuration": "00:30:00",
+    "allDaySlot": true,
+    "showNamesMonth": false,
+    "eventLimitWeek": 5,
+    "showNamesInsteadOfKuerzel": true,
+    "selectable": true,
+    "restorePosition": false,
+    "showAbwesenMonth": false,
+    "hiddenDays": [],
+    "showNutzerSchichtzeiten": true,
+    "showPopovers": true,
+    "pauseDuration": 0
+  },
+  "exportOptions": {
+    "abwesenExport": false,
+    "eigeneSchichtenOnly": false
+  },
+  "timezone": 1,
+  "disableUpdates": false,
+  "logLevel": "info"
+}`
+	if got := arzeko.userSettings(); got != want {
+		t.Fatalf("%T.userSettings():\ngot:\t%s\nwant:\t%s", arzeko, got, want)
 	}
 }
