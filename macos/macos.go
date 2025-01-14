@@ -2,6 +2,8 @@ package macos
 
 import (
 	"fmt"
+	"io"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -57,6 +59,28 @@ func (d *Dock) Restart() error {
 // Changed returns true if the Dock has been changed, otherwise false.
 func (d *Dock) Changed() bool {
 	return d.changed
+}
+
+// Download downloads URL into temp. file and returns its filename.
+// If the download fails, an error is returned.
+func Download(url string) (filename string, err error) {
+	response, err := http.Get(url)
+	if err != nil {
+		return filename, fmt.Errorf("download: %v", err)
+	}
+	defer response.Body.Close()
+	if response.StatusCode != http.StatusOK {
+		return filename, fmt.Errorf("download: %d %s", response.StatusCode, http.StatusText(response.StatusCode))
+	}
+	tempFile, err := os.CreateTemp("", filepath.Base(url))
+	if err != nil {
+		return filename, fmt.Errorf("create temp. file: %v", err)
+	}
+	defer tempFile.Close()
+	if _, err := io.Copy(tempFile, response.Body); err != nil {
+		return filename, fmt.Errorf("copy download to temp. file: %v", err)
+	}
+	return tempFile.Name(), nil
 }
 
 // Unpack extracts content from archive file into dir.
