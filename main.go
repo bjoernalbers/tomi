@@ -62,10 +62,10 @@ func main() {
 		if err := app.Install(a); err != nil {
 			log.Fatalf("%s: %v", a.Name(), err)
 		}
-		if err := dock.Add(a.Path()); err != nil {
+		if err := a.Configure(); err != nil {
 			log.Fatalf("%s: %v", a.Name(), err)
 		}
-		if err := a.Configure(); err != nil {
+		if err := dock.Add(a.Path()); err != nil {
 			log.Fatalf("%s: %v", a.Name(), err)
 		}
 	}
