@@ -20,7 +20,7 @@ type arzekoURL struct {
 
 // String returns the download URL of Arzeko or an error, if the URL could not
 // be determined.
-func (d *arzekoURL) String() (string, error) {
+func (d arzekoURL) String() (string, error) {
 	resp, err := http.Get(d.autoUpdate())
 	if err != nil {
 		return "", fmt.Errorf("%T: %v", d, err)
@@ -69,6 +69,14 @@ type Arzeko struct {
 	ServerURL *url.URL
 	Arch      string
 	Home      string
+}
+
+func (p *Arzeko) Install() error {
+	u, err := arzekoURL{ServerURL: p.ServerURL, Arch: p.Arch}.String()
+	if err != nil {
+		return err
+	}
+	return install(p.Dir(), u)
 }
 
 func (p *Arzeko) Path() string {

@@ -13,6 +13,10 @@ type Tomedo struct {
 	ServerURL *url.URL
 }
 
+func (p *Tomedo) Install() error {
+	return install(p.Dir(), tomedoURL(p.ServerURL))
+}
+
 func (p *Tomedo) Path() string {
 	return p.App.Path
 }

@@ -14,20 +14,17 @@ type App interface {
 	Exists() bool
 	DownloadURL() (string, error)
 	Configure() error
+	Install() error
 }
 
-// Install performs the actual app installation.
-func Install(p App) error {
-	u, err := p.DownloadURL()
-	if err != nil {
-		return err
-	}
-	filename, err := macos.Download(u)
+// install downloads the URL and unpacks it into dir.
+func install(dir, url string) error {
+	filename, err := macos.Download(url)
 	if err != nil {
 		return err
 	}
 	defer os.Remove(filename)
-	if err := macos.Unpack(p.Dir(), filename); err != nil {
+	if err := macos.Unpack(dir, filename); err != nil {
 		return err
 	}
 	return nil

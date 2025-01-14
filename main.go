@@ -59,7 +59,7 @@ func main() {
 		if a.Exists() {
 			continue
 		}
-		if err := app.Install(a); err != nil {
+		if err := a.Install(); err != nil {
 			log.Fatalf("%s: %v", a.Name(), err)
 		}
 		if err := a.Configure(); err != nil {
