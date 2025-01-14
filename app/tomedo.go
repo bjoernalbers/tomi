@@ -35,7 +35,8 @@ func (p *Tomedo) Path() string {
 }
 
 func (p *Tomedo) DownloadURL() (string, error) {
-	return p.ServerURL.JoinPath("filebyname/serverinternal/tomedo.app.tar").String(), nil
+	d := &tomedoDownloader{p.ServerURL}
+	return d.URL(), nil
 }
 
 func (p *Tomedo) Configure() error {
