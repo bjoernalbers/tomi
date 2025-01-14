@@ -1,4 +1,4 @@
-package server
+package tomedo
 
 import "net/url"
 
@@ -11,7 +11,7 @@ type Server struct {
 	Path   string
 }
 
-func Default() *Server {
+func DefaultServer() *Server {
 	u, err := url.Parse(defaultURL)
 	if err != nil {
 		panic(err)

@@ -1,10 +1,19 @@
-package app
+package tomedo
 
 import (
+	"net/url"
 	"testing"
-
-	"github.com/bjoernalbers/tomi/server"
 )
+
+const serverURL = "http://tomedo.example.com:8080/tomedo_live/"
+
+func ServerURL() *url.URL {
+	u, err := url.Parse(serverURL)
+	if err != nil {
+		panic(err)
+	}
+	return u
+}
 
 func TestTomedoName(t *testing.T) {
 	tomedo := Tomedo{}
@@ -26,7 +35,7 @@ func TestTomedoPath(t *testing.T) {
 }
 
 func TestTomedoURL(t *testing.T) {
-	got := tomedoURL(server.Default().URL())
+	got := tomedoURL(DefaultServer().URL())
 	want := "http://allgemeinmedizin.demo.tomedo.org:8080/tomedo_live/filebyname/serverinternal/tomedo.app.tar"
 	if got != want {
 		t.Fatalf("tomedoURL():\ngot:\t%q\nwant:\t%q", got, want)

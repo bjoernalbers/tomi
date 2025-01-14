@@ -1,4 +1,4 @@
-package app
+package tomedo
 
 import (
 	"encoding/json"

@@ -9,9 +9,8 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/bjoernalbers/tomi/app"
 	"github.com/bjoernalbers/tomi/macos"
-	"github.com/bjoernalbers/tomi/server"
+	"github.com/bjoernalbers/tomi/tomedo"
 )
 
 // version gets set via ldflags
@@ -25,10 +24,10 @@ func init() {
 
 func main() {
 	dock := &macos.Dock{}
-	s := server.Default()
-	flag.StringVar(&s.Addr, "a", s.Addr, "address of tomedo server")
-	flag.StringVar(&s.Port, "p", s.Port, "port of tomedo server")
-	flag.StringVar(&s.Path, "P", s.Path, "path of tomedo server")
+	server := tomedo.DefaultServer()
+	flag.StringVar(&server.Addr, "a", server.Addr, "address of tomedo server")
+	flag.StringVar(&server.Port, "p", server.Port, "port of tomedo server")
+	flag.StringVar(&server.Path, "P", server.Path, "path of tomedo server")
 	installArzeko := flag.Bool("A", false, "install Arzeko as well")
 	flag.Parse()
 	if os.Geteuid() == 0 {
@@ -42,14 +41,14 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	apps := []app.App{}
-	apps = append(apps, &app.Tomedo{
-		ServerURL: s.URL(),
+	apps := []tomedo.App{}
+	apps = append(apps, &tomedo.Tomedo{
+		ServerURL: server.URL(),
 		App:       macos.App{Path: filepath.Join(userAppsDir, "tomedo.app")},
 	})
 	if *installArzeko {
-		apps = append(apps, &app.Arzeko{
-			ServerURL: s.URL(),
+		apps = append(apps, &tomedo.Arzeko{
+			ServerURL: server.URL(),
 			Arch:      runtime.GOARCH,
 			App:       macos.App{Path: filepath.Join(userAppsDir, "Arzeko.app")},
 			Home:      home,

@@ -1,10 +1,8 @@
-package app
+package tomedo
 
 import (
 	"regexp"
 	"testing"
-
-	"github.com/bjoernalbers/tomi/server"
 )
 
 func TestArzekoName(t *testing.T) {
@@ -104,7 +102,7 @@ func TestArzekoURLAutoUpdate(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		u := arzekoURL{ServerURL: server.Default().URL(), Arch: tt.arch}
+		u := arzekoURL{ServerURL: DefaultServer().URL(), Arch: tt.arch}
 		if got := u.autoUpdate(); got != tt.want {
 			t.Errorf("%v.autoUpdate():\ngot:\t%q\nwant:\t%q", u, got, tt.want)
 		}
@@ -112,7 +110,7 @@ func TestArzekoURLAutoUpdate(t *testing.T) {
 }
 
 func TestArzekoURLString(t *testing.T) {
-	u := arzekoURL{ServerURL: server.Default().URL()}
+	u := arzekoURL{ServerURL: DefaultServer().URL()}
 	want := regexp.MustCompile(`http://allgemeinmedizin.demo.tomedo.org:8080/tomedo_live/filebyname/serverinternalzip/arzeko/Arzeko-\d+.\d+.\d+-mac.zip`)
 	got, err := u.String()
 	if err != nil {
