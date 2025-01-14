@@ -38,7 +38,7 @@ func main() {
 	if home == "" {
 		log.Fatalf("$HOME is not set")
 	}
-	userAppsDir, err := CreateUserAppsDir(home)
+	userAppsDir, err := macos.CreateUserAppsDir(home)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -76,22 +76,4 @@ Usage: tomi [options]
 Options:`, version)
 	fmt.Fprintln(flag.CommandLine.Output(), header)
 	flag.PrintDefaults()
-}
-
-// CreateUserAppsDir creates a localized user application directory if missing
-// and returns its path.
-func CreateUserAppsDir(home string) (string, error) {
-	dir := filepath.Join(home, "Applications")
-	if _, err := os.Stat(dir); err == nil {
-		return dir, nil
-	}
-	if err := os.Mkdir(dir, 0700); err != nil {
-		return "", fmt.Errorf("create user apps dir: %v", err)
-	}
-	if f, err := os.Create(filepath.Join(dir, ".localized")); err != nil {
-		return "", fmt.Errorf("localize user apps dir: %v", err)
-	} else {
-		f.Close()
-	}
-	return dir, nil
 }
