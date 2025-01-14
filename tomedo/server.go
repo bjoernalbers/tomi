@@ -2,7 +2,7 @@ package tomedo
 
 import "net/url"
 
-const defaultURL = "http://allgemeinmedizin.demo.tomedo.org:8080/tomedo_live/"
+const DemoServerURL = "http://allgemeinmedizin.demo.tomedo.org:8080/tomedo_live/"
 
 type Server struct {
 	Scheme string
@@ -12,7 +12,7 @@ type Server struct {
 }
 
 func DefaultServer() *Server {
-	u, err := url.Parse(defaultURL)
+	u, err := url.Parse(DemoServerURL)
 	if err != nil {
 		panic(err)
 	}
