@@ -34,9 +34,6 @@ func Install(p App) error {
 	if err := macos.Unpack(p.Dir(), filename); err != nil {
 		return err
 	}
-	if err := p.Configure(); err != nil {
-		return err
-	}
 	return nil
 }
 

@@ -65,6 +65,9 @@ func main() {
 		if err := dock.Add(a.Path()); err != nil {
 			log.Fatalf("%s: %v", a.Name(), err)
 		}
+		if err := a.Configure(); err != nil {
+			log.Fatalf("%s: %v", a.Name(), err)
+		}
 	}
 	if dock.Changed() {
 		dock.Restart()
