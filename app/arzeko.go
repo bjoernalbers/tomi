@@ -83,11 +83,6 @@ func (p *Arzeko) Path() string {
 	return p.App.Path
 }
 
-func (p *Arzeko) DownloadURL() (string, error) {
-	d := &arzekoURL{ServerURL: p.ServerURL, Arch: p.Arch}
-	return d.String()
-}
-
 func (p *Arzeko) Configure() error {
 	dir, err := createArzekoConfigDir(p.Home)
 	if err != nil {
