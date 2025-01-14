@@ -84,20 +84,6 @@ func (p *Arzeko) Path() string {
 	return p.App.Path
 }
 
-// latestVersionURL returns the URL to query the download URL of the latest
-// Arzeko version.
-func (p *Arzeko) latestVersionURL() string {
-	u := p.ServerURL.JoinPath("arzeko/latestmac")
-	// Arzeko itself queries latest version with "aarch=intel" on
-	// Intel-based Macs and "aarch=arm" on Apple Silicon.
-	arch := "intel"
-	if strings.HasPrefix(p.Arch, "arm") {
-		arch = "arm"
-	}
-	u.RawQuery = fmt.Sprintf("version=0.0.0&aarch=%s", arch)
-	return u.String()
-}
-
 func (p *Arzeko) DownloadURL() (string, error) {
 	d := &arzekoDownloader{ServerURL: p.ServerURL, Arch: p.Arch}
 	return d.URL()
