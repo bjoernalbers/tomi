@@ -1,7 +1,6 @@
 package app
 
 import (
-	"net/http"
 	"testing"
 
 	"github.com/bjoernalbers/tomi/server"
@@ -26,22 +25,10 @@ func TestTomedoPath(t *testing.T) {
 	}
 }
 
-func TestTomedoDownloaderURL(t *testing.T) {
-	d := tomedoDownloader{server.Default().URL()}
+func TestTomedoURL(t *testing.T) {
+	u := tomedoURL{server.Default().URL()}
 	want := "http://allgemeinmedizin.demo.tomedo.org:8080/tomedo_live/filebyname/serverinternal/tomedo.app.tar"
-	if got := d.URL(); got != want {
-		t.Fatalf("%T.URL():\ngot:\t%q\nwant:\t%q", d, got, want)
-	}
-}
-
-func TestTomedoDownloaderGet(t *testing.T) {
-	d := tomedoDownloader{server.Default().URL()}
-	resp, err := d.Get()
-	if err != nil {
-		t.Fatalf("%T.Get(): error = %v", d, err)
-	}
-	defer resp.Body.Close()
-	if got, want := resp.StatusCode, http.StatusOK; got != want {
-		t.Fatalf("%T.Get(): HTTP Status = %d, want: %d", d, got, want)
+	if got := u.String(); got != want {
+		t.Fatalf("%T.String():\ngot:\t%q\nwant:\t%q", u, got, want)
 	}
 }

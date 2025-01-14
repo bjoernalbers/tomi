@@ -1,7 +1,6 @@
 package app
 
 import (
-	"net/http"
 	"regexp"
 	"testing"
 
@@ -74,7 +73,7 @@ func TestArzekoPath(t *testing.T) {
 	}
 }
 
-func TestArzekoDownloaderAutoUpdateURL(t *testing.T) {
+func TestArzekoURLAutoUpdate(t *testing.T) {
 	tests := []struct {
 		arch string
 		want string
@@ -105,33 +104,21 @@ func TestArzekoDownloaderAutoUpdateURL(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		d := arzekoDownloader{ServerURL: server.Default().URL(), Arch: tt.arch}
-		if got := d.AutoUpdateURL(); got != tt.want {
-			t.Errorf("%v.AutoUpdateURL():\ngot:\t%q\nwant:\t%q", d, got, tt.want)
+		u := arzekoURL{ServerURL: server.Default().URL(), Arch: tt.arch}
+		if got := u.autoUpdate(); got != tt.want {
+			t.Errorf("%v.autoUpdate():\ngot:\t%q\nwant:\t%q", u, got, tt.want)
 		}
 	}
 }
 
-func TestArzekoDownloaderURL(t *testing.T) {
-	d := arzekoDownloader{ServerURL: server.Default().URL()}
+func TestArzekoURLString(t *testing.T) {
+	u := arzekoURL{ServerURL: server.Default().URL()}
 	want := regexp.MustCompile(`http://allgemeinmedizin.demo.tomedo.org:8080/tomedo_live/filebyname/serverinternalzip/arzeko/Arzeko-\d+.\d+.\d+-mac.zip`)
-	got, err := d.URL()
+	got, err := u.String()
 	if err != nil {
-		t.Fatalf("%T.URL(): error = %v", d, err)
+		t.Fatalf("%T.String(): error = %v", u, err)
 	}
 	if !want.MatchString(got) {
-		t.Fatalf("%T.URL():\ngot:\t%q\nwant:\t%q", d, got, want)
-	}
-}
-
-func TestArzekoDownloaderGet(t *testing.T) {
-	d := arzekoDownloader{ServerURL: server.Default().URL()}
-	resp, err := d.Get()
-	if err != nil {
-		t.Fatalf("%T.Get(): error = %v", d, err)
-	}
-	defer resp.Body.Close()
-	if got, want := resp.StatusCode, http.StatusOK; got != want {
-		t.Fatalf("%T.Get(): HTTP Status = %d, want: %d", d, got, want)
+		t.Fatalf("%T.String():\ngot:\t%q\nwant:\t%q", u, got, want)
 	}
 }

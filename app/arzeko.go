@@ -13,25 +13,15 @@ import (
 	"github.com/bjoernalbers/tomi/macos"
 )
 
-type arzekoDownloader struct {
+type arzekoURL struct {
 	ServerURL *url.URL
 	Arch      string
 }
 
-func (d *arzekoDownloader) Get() (*http.Response, error) {
-	u, err := d.URL()
-	if err != nil {
-		return nil, err
-	}
-	resp, err := http.Get(u)
-	if err != nil {
-		return nil, fmt.Errorf("%T: %v", d, err)
-	}
-	return resp, nil
-}
-
-func (d *arzekoDownloader) URL() (string, error) {
-	resp, err := http.Get(d.AutoUpdateURL())
+// String returns the download URL of Arzeko or an error, if the URL could not
+// be determined.
+func (d *arzekoURL) String() (string, error) {
+	resp, err := http.Get(d.autoUpdate())
 	if err != nil {
 		return "", fmt.Errorf("%T: %v", d, err)
 	}
@@ -46,7 +36,8 @@ func (d *arzekoDownloader) URL() (string, error) {
 	return d.replaceHost(latestVersion.URL)
 }
 
-func (d *arzekoDownloader) AutoUpdateURL() string {
+// autoUpdate returns the URL to query the download URL of Arzeko.
+func (d *arzekoURL) autoUpdate() string {
 	u := d.ServerURL.JoinPath("arzeko/latestmac")
 	// Arzeko itself queries latest version with "aarch=intel" on
 	// Intel-based Macs and "aarch=arm" on Apple Silicon.
@@ -64,7 +55,7 @@ func (d *arzekoDownloader) AutoUpdateURL() string {
 //
 // $ curl 'http://allgemeinmedizin.demo.tomedo.org:8080/tomedo_live/arzeko/latestmac?version=0.0.0'
 // {"url":"http://127.0.0.1:9901/tomedo_live/filebyname/serverinternalzip/arzeko/Arzeko-1.146.6-mac.zip","name":"1.146.6","notes":"Aarch: null","pub_date":null}%
-func (d *arzekoDownloader) replaceHost(downloadURL string) (string, error) {
+func (d *arzekoURL) replaceHost(downloadURL string) (string, error) {
 	u, err := url.Parse(downloadURL)
 	if err != nil {
 		return "", fmt.Errorf("%T: replace host: %v", d, err)
@@ -85,8 +76,8 @@ func (p *Arzeko) Path() string {
 }
 
 func (p *Arzeko) DownloadURL() (string, error) {
-	d := &arzekoDownloader{ServerURL: p.ServerURL, Arch: p.Arch}
-	return d.URL()
+	d := &arzekoURL{ServerURL: p.ServerURL, Arch: p.Arch}
+	return d.String()
 }
 
 func (p *Arzeko) Configure() error {
