@@ -1,5 +1,13 @@
+VERSION := $(shell git describe --tags | tr -d v)
+
 all: unit
 .PHONY: all
+
+tomi: ## Build tomi binary
+	for arch in arm64 amd64; do GOARCH="$${arch}" go build -o "$@-$${arch}" -ldflags '-X main.version=$(VERSION)'; done
+	lipo $@-* -create -output $@
+	rm $@-*
+.PHONY: tomi
 
 release: ## Publish a new release
 	goreleaser release --clean
