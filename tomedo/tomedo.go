@@ -19,19 +19,6 @@ type App interface {
 	Configure() error
 }
 
-// install downloads the URL and unpacks it into dir.
-func install(dir, url string) error {
-	filename, err := macos.Download(url)
-	if err != nil {
-		return err
-	}
-	defer os.Remove(filename)
-	if err := macos.Unpack(dir, filename); err != nil {
-		return err
-	}
-	return nil
-}
-
 type Tomedo struct {
 	Dir       string
 	ServerURL *url.URL
@@ -75,4 +62,17 @@ func join(dir, name string) string {
 // tomedoURL returns the download URL of tomedo.
 func tomedoURL(serverURL *url.URL) string {
 	return serverURL.JoinPath("filebyname/serverinternal/tomedo.app.tar").String()
+}
+
+// install downloads the URL and unpacks it into dir.
+func install(dir, url string) error {
+	filename, err := macos.Download(url)
+	if err != nil {
+		return err
+	}
+	defer os.Remove(filename)
+	if err := macos.Unpack(dir, filename); err != nil {
+		return err
+	}
+	return nil
 }

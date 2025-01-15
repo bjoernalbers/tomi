@@ -11,57 +11,6 @@ import (
 	"strings"
 )
 
-type arzekoURL struct {
-	ServerURL *url.URL
-	Arch      string
-}
-
-// String returns the download URL of Arzeko or an error, if the URL could not
-// be determined.
-func (d arzekoURL) String() (string, error) {
-	resp, err := http.Get(d.autoUpdate())
-	if err != nil {
-		return "", fmt.Errorf("%T: %v", d, err)
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("%T: HTTP %d %s (%s)", d, resp.StatusCode, http.StatusText(resp.StatusCode), resp.Request.URL)
-	}
-	latestVersion := struct{ URL string }{}
-	if err := json.NewDecoder(resp.Body).Decode(&latestVersion); err != nil {
-		return "", fmt.Errorf("%T: parse JSON response: %v", d, err)
-	}
-	return d.replaceHost(latestVersion.URL)
-}
-
-// autoUpdate returns the URL to query the download URL of Arzeko.
-func (d *arzekoURL) autoUpdate() string {
-	u := d.ServerURL.JoinPath("arzeko/latestmac")
-	// Arzeko itself queries latest version with "aarch=intel" on
-	// Intel-based Macs and "aarch=arm" on Apple Silicon.
-	arch := "intel"
-	if strings.HasPrefix(d.Arch, "arm") {
-		arch = "arm"
-	}
-	u.RawQuery = fmt.Sprintf("version=0.0.0&aarch=%s", arch)
-	return u.String()
-}
-
-// replaceHost replaces the host in given download URL by the server host,
-// because the tomedo demo server returns unreachable download URLs containing
-// localhost:
-//
-// $ curl 'http://allgemeinmedizin.demo.tomedo.org:8080/tomedo_live/arzeko/latestmac?version=0.0.0'
-// {"url":"http://127.0.0.1:9901/tomedo_live/filebyname/serverinternalzip/arzeko/Arzeko-1.146.6-mac.zip","name":"1.146.6","notes":"Aarch: null","pub_date":null}%
-func (d *arzekoURL) replaceHost(downloadURL string) (string, error) {
-	u, err := url.Parse(downloadURL)
-	if err != nil {
-		return "", fmt.Errorf("%T: replace host: %v", d, err)
-	}
-	u.Host = d.ServerURL.Host
-	return u.String(), nil
-}
-
 type Arzeko struct {
 	Dir       string
 	ServerURL *url.URL
@@ -103,6 +52,17 @@ func (p *Arzeko) Configure() error {
 		return fmt.Errorf("create Arzeko config file: %v", err)
 	}
 	return nil
+}
+
+func createArzekoConfigDir(home string) (string, error) {
+	dir := filepath.Join(home, "Library", "Application Support", "Arzeko")
+	if _, err := os.Stat(dir); err == nil {
+		return dir, nil
+	}
+	if err := os.Mkdir(dir, 0700); err != nil {
+		return "", fmt.Errorf("create Arzeko config dir: %v", err)
+	}
+	return dir, nil
 }
 
 func (p *Arzeko) userSettings() string {
@@ -155,13 +115,54 @@ func (p *Arzeko) userSettings() string {
 	return content
 }
 
-func createArzekoConfigDir(home string) (string, error) {
-	dir := filepath.Join(home, "Library", "Application Support", "Arzeko")
-	if _, err := os.Stat(dir); err == nil {
-		return dir, nil
+// arzekoURL builds the download URL of Arzeko.
+type arzekoURL struct {
+	ServerURL *url.URL
+	Arch      string
+}
+
+// String returns the download URL of Arzeko or an error, if the URL could not
+// be determined.
+func (d arzekoURL) String() (string, error) {
+	resp, err := http.Get(d.autoUpdate())
+	if err != nil {
+		return "", fmt.Errorf("%T: %v", d, err)
 	}
-	if err := os.Mkdir(dir, 0700); err != nil {
-		return "", fmt.Errorf("create Arzeko config dir: %v", err)
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("%T: HTTP %d %s (%s)", d, resp.StatusCode, http.StatusText(resp.StatusCode), resp.Request.URL)
 	}
-	return dir, nil
+	latestVersion := struct{ URL string }{}
+	if err := json.NewDecoder(resp.Body).Decode(&latestVersion); err != nil {
+		return "", fmt.Errorf("%T: parse JSON response: %v", d, err)
+	}
+	return d.replaceHost(latestVersion.URL)
+}
+
+// autoUpdate returns the URL to query the download URL of Arzeko.
+func (d *arzekoURL) autoUpdate() string {
+	u := d.ServerURL.JoinPath("arzeko/latestmac")
+	// Arzeko itself queries latest version with "aarch=intel" on
+	// Intel-based Macs and "aarch=arm" on Apple Silicon.
+	arch := "intel"
+	if strings.HasPrefix(d.Arch, "arm") {
+		arch = "arm"
+	}
+	u.RawQuery = fmt.Sprintf("version=0.0.0&aarch=%s", arch)
+	return u.String()
+}
+
+// replaceHost replaces the host in given download URL by the server host,
+// because the tomedo demo server returns unreachable download URLs containing
+// localhost:
+//
+// $ curl 'http://allgemeinmedizin.demo.tomedo.org:8080/tomedo_live/arzeko/latestmac?version=0.0.0'
+// {"url":"http://127.0.0.1:9901/tomedo_live/filebyname/serverinternalzip/arzeko/Arzeko-1.146.6-mac.zip","name":"1.146.6","notes":"Aarch: null","pub_date":null}%
+func (d *arzekoURL) replaceHost(downloadURL string) (string, error) {
+	u, err := url.Parse(downloadURL)
+	if err != nil {
+		return "", fmt.Errorf("%T: replace host: %v", d, err)
+	}
+	u.Host = d.ServerURL.Host
+	return u.String(), nil
 }
