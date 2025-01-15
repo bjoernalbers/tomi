@@ -43,7 +43,15 @@ func (d *Dock) Changed() bool {
 // Download downloads URL into temp. file and returns its filename.
 // If the download fails, an error is returned.
 func Download(url string) (filename string, err error) {
-	response, err := http.Get(url)
+	client := http.Client{
+		Transport: &http.Transport{
+			// Disabling compression will speed up the download of
+			// tomedo.app.tar since it doesn't have to be
+			// compressed twice.
+			DisableCompression: true,
+		},
+	}
+	response, err := client.Get(url)
 	if err != nil {
 		return filename, fmt.Errorf("download: %v", err)
 	}
