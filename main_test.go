@@ -3,6 +3,7 @@
 package main
 
 import (
+	"os"
 	"os/exec"
 	"strings"
 	"testing"
@@ -18,5 +19,13 @@ func TestHelp(t *testing.T) {
 	}
 	if want := "Usage:"; !strings.Contains(string(output), want) {
 		t.Fatalf("Help does not include %q\n%s", want, output)
+	}
+}
+
+func TestHomeUnset(t *testing.T) {
+	cmd := exec.Command(tomi)
+	os.Setenv("HOME", "")
+	if err := cmd.Run(); err == nil {
+		t.Fatalf("tomi should fail if $HOME is unset")
 	}
 }
