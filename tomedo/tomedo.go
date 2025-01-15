@@ -2,6 +2,8 @@ package tomedo
 
 import (
 	"fmt"
+	"io"
+	"net/http"
 	"net/url"
 	"os"
 	"os/exec"
@@ -66,7 +68,7 @@ func tomedoURL(serverURL *url.URL) string {
 
 // install downloads the URL and unpacks it into dir.
 func install(dir, url string) error {
-	filename, err := macos.Download(url)
+	filename, err := download(url)
 	if err != nil {
 		return err
 	}
@@ -75,4 +77,34 @@ func install(dir, url string) error {
 		return err
 	}
 	return nil
+}
+
+// download downloads URL into temp. file and returns its filename.
+// If the download fails, an error is returned.
+func download(url string) (filename string, err error) {
+	client := http.Client{
+		Transport: &http.Transport{
+			// Disabling compression will speed up the download of
+			// tomedo.app.tar since it doesn't have to be
+			// compressed twice.
+			DisableCompression: true,
+		},
+	}
+	response, err := client.Get(url)
+	if err != nil {
+		return filename, fmt.Errorf("download: %v", err)
+	}
+	defer response.Body.Close()
+	if response.StatusCode != http.StatusOK {
+		return filename, fmt.Errorf("download: %d %s", response.StatusCode, http.StatusText(response.StatusCode))
+	}
+	tempFile, err := os.CreateTemp("", filepath.Base(url))
+	if err != nil {
+		return filename, fmt.Errorf("create temp. file: %v", err)
+	}
+	defer tempFile.Close()
+	if _, err := io.Copy(tempFile, response.Body); err != nil {
+		return filename, fmt.Errorf("copy download to temp. file: %v", err)
+	}
+	return tempFile.Name(), nil
 }
