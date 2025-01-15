@@ -1,10 +1,10 @@
-all: test
+all: unit
 .PHONY: all
 
 release:
 	goreleaser release --clean
 .PHONY: release
 
-test:
+unit:
 	go test ./...
-.PHONY: test
+.PHONY: unit
