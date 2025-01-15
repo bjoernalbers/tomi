@@ -17,8 +17,8 @@ unit: ## Run unit tests
 	go test ./...
 .PHONY: unit
 
-integration: ## Run integration tests
-	go test main.go main_test.go
+integration: tomi ## Run integration tests
+	go test main_test.go
 .PHONY: integration
 
 # Absolutely awesome: http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html

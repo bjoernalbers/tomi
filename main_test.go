@@ -8,8 +8,10 @@ import (
 	"testing"
 )
 
+const tomi = "./tomi"
+
 func TestHelp(t *testing.T) {
-	cmd := exec.Command("go", "run", "main.go", "-h")
+	cmd := exec.Command(tomi, "-h")
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		t.Fatalf("failed to show help: %v", err)
