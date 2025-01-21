@@ -84,9 +84,8 @@ func install(dir, url string) error {
 func download(url string) (filename string, err error) {
 	client := http.Client{
 		Transport: &http.Transport{
-			// Disabling compression will speed up the download of
-			// tomedo.app.tar since it doesn't have to be
-			// compressed twice.
+			// Disabling compression will speed up the download of tomedo.app.tar.
+			// See: https://forum.tomedo.de/index.php/94741/wie-man-tomedo-downloads-um-500-beschleunigt
 			DisableCompression: true,
 		},
 	}
