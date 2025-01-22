@@ -75,11 +75,13 @@ func TestPackageVersion(t *testing.T) {
 	if output, err := exec.Command(tomi, "-b").CombinedOutput(); err != nil {
 		t.Fatalf(string(output))
 	}
+	pkg := "tomedo-installer.pkg"
+	defer os.Remove(pkg)
 	want, err := getTomiVersion(tomi)
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
-	got, err := getPackageVersion("tomedo-installer.pkg")
+	got, err := getPackageVersion(pkg)
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
@@ -92,8 +94,10 @@ func TestPackageIdentifier(t *testing.T) {
 	if output, err := exec.Command(tomi, "-b").CombinedOutput(); err != nil {
 		t.Fatalf(string(output))
 	}
+	pkg := "tomedo-installer.pkg"
+	defer os.Remove(pkg)
 	want := "de.bjoernalbers.tomedo-installer"
-	got, err := getPackageIdentifier("tomedo-installer.pkg")
+	got, err := getPackageIdentifier(pkg)
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
