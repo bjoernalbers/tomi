@@ -39,24 +39,17 @@ func TestBuildPackage(t *testing.T) {
 	if err != nil {
 		t.Fatalf("%s", string(output))
 	}
-	path := "tomedo-installer.pkg"
-	defer os.Remove(path)
-	if _, err := os.Stat(path); err != nil {
-		t.Fatalf("%v", err)
-	}
-	tmp, err := os.MkdirTemp("", "tomi-test-*")
+	pkg := "tomedo-installer.pkg"
+	defer os.Remove(pkg)
+	dir, err := extractPkg(pkg)
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
-	defer os.RemoveAll(tmp)
-	expandedPackage := filepath.Join(tmp, "tomedo-installer.pkg")
-	if output, err := exec.Command("/usr/sbin/pkgutil", "--expand", path, expandedPackage).CombinedOutput(); err != nil {
-		t.Fatalf("%s", string(output))
-	}
-	if _, err := os.Stat(filepath.Join(expandedPackage, "Scripts", "preinstall")); err != nil {
+	defer os.RemoveAll(dir)
+	if _, err := os.Stat(filepath.Join(dir, "Scripts", "preinstall")); err != nil {
 		t.Fatalf("%v", err)
 	}
-	if _, err := os.Stat(filepath.Join(expandedPackage, "Scripts", "tomi")); err != nil {
+	if _, err := os.Stat(filepath.Join(dir, "Scripts", "tomi")); err != nil {
 		t.Fatalf("%v", err)
 	}
 }
