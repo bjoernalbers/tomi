@@ -78,6 +78,23 @@ func TestVersion(t *testing.T) {
 	}
 }
 
+func TestPackageVersion(t *testing.T) {
+	if output, err := exec.Command(tomi, "-b").CombinedOutput(); err != nil {
+		t.Fatalf(string(output))
+	}
+	want, err := getTomiVersion(tomi)
+	if err != nil {
+		t.Fatalf("%v", err)
+	}
+	got, err := getPackageVersion("tomedo-installer.pkg")
+	if err != nil {
+		t.Fatalf("%v", err)
+	}
+	if got != want {
+		t.Fatalf("got: %q, want: %q", got, want)
+	}
+}
+
 func getTomiVersion(command string) (string, error) {
 	cmd := exec.Command(command, "-h")
 	output, err := cmd.CombinedOutput()
@@ -90,4 +107,37 @@ func getTomiVersion(command string) (string, error) {
 		return "", fmt.Errorf("no version captured: %v", m)
 	}
 	return m[1], nil
+}
+
+func getPackageVersion(path string) (string, error) {
+	dir, err := extractPkg(path)
+	if err != nil {
+		return "", err
+	}
+	defer os.RemoveAll(dir)
+	output, err := os.ReadFile(filepath.Join(dir, "PackageInfo"))
+	if err != nil {
+		return "", err
+	}
+	re := regexp.MustCompile(`<pkg-info.* version="([^"]+)" `)
+	m := re.FindStringSubmatch(string(output))
+	if m == nil || len(m) < 2 {
+		return "", fmt.Errorf("no version captured: %v", m)
+	}
+	return m[1], nil
+}
+
+// extractPkg extracts content of .pkg file into temp. dir and returns its path.
+func extractPkg(path string) (string, error) {
+	pkg := filepath.Base(path)
+	tmp, err := os.MkdirTemp("", pkg)
+	if err != nil {
+		return "", err
+	}
+	dir := filepath.Join(tmp, pkg)
+	output, err := exec.Command("/usr/sbin/pkgutil", "--expand", path, dir).CombinedOutput()
+	if err != nil {
+		return "", fmt.Errorf(string(output))
+	}
+	return dir, nil
 }

@@ -38,7 +38,7 @@ func main() {
 		log.Fatal("please run as regular user, not as root or with sudo!")
 	}
 	if *buildPackage {
-		if err := buildPkg(); err != nil {
+		if err := buildPkg(version); err != nil {
 			log.Fatalf("build package: %v", err)
 		}
 		os.Exit(0)
@@ -93,7 +93,7 @@ Options:`, version)
 	flag.PrintDefaults()
 }
 
-func buildPkg() error {
+func buildPkg(version string) error {
 	payloadDir, err := os.MkdirTemp("", "payload-*")
 	if err != nil {
 		return fmt.Errorf("create payload dir: %v", err)
@@ -144,9 +144,10 @@ fi
 		return fmt.Errorf("copy tomi: %v", string(output))
 	}
 	cmd := exec.Command("/usr/bin/pkgbuild",
-		"--root", payloadDir,
 		"--identifier", "de.bjoernalbers.tomedo-installer",
+		"--version", version,
 		"--scripts", scriptsDir,
+		"--root", payloadDir,
 		"tomedo-installer.pkg")
 	output, err := cmd.CombinedOutput()
 	if err != nil {
