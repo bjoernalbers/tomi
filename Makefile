@@ -1,6 +1,6 @@
 VERSION := $(shell git describe --tags | tr -d v)
 
-all: unit
+all: unit integration
 .PHONY: all
 
 tomi: ## Build tomi binary
