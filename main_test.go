@@ -3,9 +3,11 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
 )
@@ -57,4 +59,35 @@ func TestBuildPackage(t *testing.T) {
 	if _, err := os.Stat(filepath.Join(expandedPackage, "Scripts", "tomi")); err != nil {
 		t.Fatalf("%v", err)
 	}
+}
+
+func TestVersion(t *testing.T) {
+	got, err := getTomiVersion(tomi)
+	if err != nil {
+		t.Fatalf("%v", err)
+	}
+	if got == "" {
+		t.Fatalf("version not set")
+	}
+	// Regular expression taken from here:
+	// https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
+	re := regexp.MustCompile(`^(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$`)
+	m := re.FindStringSubmatch(got)
+	if m == nil {
+		t.Fatalf("no version captured in output: %q", got)
+	}
+}
+
+func getTomiVersion(command string) (string, error) {
+	cmd := exec.Command(command, "-h")
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return "", fmt.Errorf(string(output))
+	}
+	re := regexp.MustCompile(`\(version (.+)\)`)
+	m := re.FindStringSubmatch(string(output))
+	if m == nil || len(m) < 2 {
+		return "", fmt.Errorf("no version captured: %v", m)
+	}
+	return m[1], nil
 }
