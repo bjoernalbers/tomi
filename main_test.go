@@ -88,6 +88,20 @@ func TestPackageVersion(t *testing.T) {
 	}
 }
 
+func TestPackageIdentifier(t *testing.T) {
+	if output, err := exec.Command(tomi, "-b").CombinedOutput(); err != nil {
+		t.Fatalf(string(output))
+	}
+	want := "de.bjoernalbers.tomedo-installer"
+	got, err := getPackageIdentifier("tomedo-installer.pkg")
+	if err != nil {
+		t.Fatalf("%v", err)
+	}
+	if got != want {
+		t.Fatalf("got: %q, want: %q", got, want)
+	}
+}
+
 func getTomiVersion(command string) (string, error) {
 	cmd := exec.Command(command, "-h")
 	output, err := cmd.CombinedOutput()
@@ -116,6 +130,24 @@ func getPackageVersion(path string) (string, error) {
 	m := re.FindStringSubmatch(string(output))
 	if m == nil || len(m) < 2 {
 		return "", fmt.Errorf("no version captured: %v", m)
+	}
+	return m[1], nil
+}
+
+func getPackageIdentifier(path string) (string, error) {
+	dir, err := extractPkg(path)
+	if err != nil {
+		return "", err
+	}
+	defer os.RemoveAll(dir)
+	output, err := os.ReadFile(filepath.Join(dir, "PackageInfo"))
+	if err != nil {
+		return "", err
+	}
+	re := regexp.MustCompile(`<pkg-info.* identifier="([^"]+)" `)
+	m := re.FindStringSubmatch(string(output))
+	if m == nil || len(m) < 2 {
+		return "", fmt.Errorf("no identifier captured: %v", m)
 	}
 	return m[1], nil
 }
