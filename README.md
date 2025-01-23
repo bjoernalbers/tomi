@@ -1,19 +1,18 @@
 # tomi - the missing tomedo-installer
 
-Setting up [tomedo](https://tomedo.de) on a Mac is simple, but tedious.
-tomi is a command line program that automatically installs tomedo to relieve
-lazy admins (like me) of some work.
+Setting up [tomedo](https://tomedo.de) on a Mac is simple, but tedious:
 
-## Features
+1. Create new directory (since tomedo cannot be installed to `/Applications`)
+2. Download (a probably outdated) tomedo.app from somewhere into this folder
+3. Add tomedo to Dock
+4. Launch tomedo.app for the first time and enter address of your tomedo-server
+6. Wait a few minutes for tomedo's auto-update to complete
 
-tomi performs the following steps for the current user:
+Just let tomi take care of that!
+tomi is a command line program that builds custom installation packages to set up
+tomedo (and Arzeko) automatically.
 
-1. Download tomedo.app from tomedo server and install into `$HOME/Applications`
-2. Configure tomedo.app to connect to tomedo server
-3. Add tomedo.app to Dock
-
-Updates are handled by tomedo itself, so tomi does nothing at all if
-`$HOME/Applications/tomedo.app` already exists.
+(Updates are still handled by tomedo itself.)
 
 ## Installation
 
@@ -34,7 +33,6 @@ tomi will be removed automatically on the next reboot.
 Use `$tomi -h` to show the help:
 
 ```
-$tomi -h
 tomi - the missing tomedo-installer (version unset)
 
 Usage: tomi [options]
@@ -45,6 +43,7 @@ Options:
         path of tomedo server (default "/tomedo_live/")
   -a string
         address of tomedo server (default "allgemeinmedizin.demo.tomedo.org")
+  -b    build installation package
   -p string
         port of tomedo server (default "8080")
 ```
@@ -59,4 +58,10 @@ from `192.168.0.42`:
 
 ```
 $tomi -A -a 192.128.0.42
+```
+
+Add the build flag (-b) to create a custom `tomedo-installer.pkg`:
+
+```
+$tomi -A -a 192.128.0.42 -b
 ```

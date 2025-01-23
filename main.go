@@ -29,7 +29,7 @@ func main() {
 	flag.StringVar(&server.Port, "p", server.Port, "port of tomedo server")
 	flag.StringVar(&server.Path, "P", server.Path, "path of tomedo server")
 	installArzeko := flag.Bool("A", false, "install Arzeko as well")
-	buildPackage := flag.Bool("b", false, "build installation package to install tomedo from official demo server")
+	buildPackage := flag.Bool("b", false, "build installation package")
 	flag.Parse()
 	if os.Geteuid() == 0 {
 		log.Fatal("please run as regular user, not as root or with sudo!")
