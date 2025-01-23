@@ -28,7 +28,7 @@ func Build(args []string, version string) error {
 	if err != nil {
 		return fmt.Errorf("create preinstall script: %v", err)
 	}
-	if _, err := io.Copy(preinstall, strings.NewReader(preinstallScript())); err != nil {
+	if _, err := io.Copy(preinstall, strings.NewReader(preinstallScript(args[1:]))); err != nil {
 		return fmt.Errorf("copy preinstall script: %v", err)
 	}
 	preinstall.Close()
@@ -48,8 +48,12 @@ func Build(args []string, version string) error {
 	return nil
 }
 
-func preinstallScript() string {
-	return `#!/bin/sh
+func preinstallScript(args []string) string {
+	cmd := `"${tomi}"`
+	for _, a := range args {
+		cmd = fmt.Sprintf("%s %q", cmd, a)
+	}
+	return fmt.Sprintf(`#!/bin/sh
 
 set -eu
 
@@ -58,7 +62,7 @@ export PATH=/bin:/sbin:/usr/bin:/usr/sbin
 tomi="$(dirname "$0")/tomi"
 
 loggedInUser() {
-local user=$(stat -f %Su /dev/console)
+local user=$(stat -f %%Su /dev/console)
 
 if [ -z "${user}" ]; then exit 1; fi
 if [ "${user}" = 'root' ]; then exit 1; fi
@@ -67,10 +71,10 @@ echo "${user}"
 
 if username=$(loggedInUser); then
 echo "Running tomi as user '${username}'..."
-sudo -u "${username}" --set-home "${tomi}"
+sudo -u "${username}" --set-home %s
 else
 echo "ERROR: Could not determine active user."
 exit 1
 fi
-`
+`, cmd)
 }

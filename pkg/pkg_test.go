@@ -9,6 +9,7 @@ func TestBuild(t *testing.T) {
 }
 
 func TestPreinstallScript(t *testing.T) {
+	got := preinstallScript([]string{"-A", "-a", "tomedo.example.com"})
 	want := `#!/bin/sh
 
 set -eu
@@ -27,13 +28,12 @@ echo "${user}"
 
 if username=$(loggedInUser); then
 echo "Running tomi as user '${username}'..."
-sudo -u "${username}" --set-home "${tomi}"
+sudo -u "${username}" --set-home "${tomi}" "-A" "-a" "tomedo.example.com"
 else
 echo "ERROR: Could not determine active user."
 exit 1
 fi
 `
-	got := preinstallScript()
 	if got != want {
 		t.Fatalf("got:\n%s\n\nwant:\n%s", got, want)
 	}
