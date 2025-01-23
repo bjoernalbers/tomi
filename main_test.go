@@ -168,3 +168,40 @@ func extractPkg(path string) (string, error) {
 	}
 	return dir, nil
 }
+
+func TestStripBuildFlag(t *testing.T) {
+	tests := []struct {
+		in   []string
+		want []string
+	}{
+		{
+			[]string{},
+			[]string{},
+		},
+		{
+			[]string{"-A", "-a", "tomedo.example.com"},
+			[]string{"-A", "-a", "tomedo.example.com"},
+		},
+		{
+			[]string{"-A", "-a", "tomedo.example.com", "-b"},
+			[]string{"-A", "-a", "tomedo.example.com"},
+		},
+	}
+	for _, tt := range tests {
+		if got, want := stripBuildFlag(tt.in), tt.want; !equal(got, want) {
+			t.Errorf("got: %v want: %v", got, want)
+		}
+	}
+}
+
+func equal(a, b []string) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
+}

@@ -35,7 +35,7 @@ func main() {
 		log.Fatal("please run as regular user, not as root or with sudo!")
 	}
 	if *buildPackage {
-		if err := pkg.Build(version); err != nil {
+		if err := pkg.Build(stripBuildFlag(os.Args), version); err != nil {
 			log.Fatalf("build package: %v", err)
 		}
 		os.Exit(0)
@@ -88,4 +88,16 @@ Usage: tomi [options]
 Options:`, version)
 	fmt.Fprintln(flag.CommandLine.Output(), header)
 	flag.PrintDefaults()
+}
+
+// stripBuildFlag returns the given args without build flag.
+func stripBuildFlag(args []string) []string {
+	const buildFlag = "-b"
+	newArgs := []string{}
+	for i := range args {
+		if arg := args[i]; arg != buildFlag {
+			newArgs = append(newArgs, arg)
+		}
+	}
+	return newArgs
 }

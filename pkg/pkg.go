@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func Build(version string) error {
+func Build(args []string, version string) error {
 	payloadDir, err := os.MkdirTemp("", "payload-*")
 	if err != nil {
 		return fmt.Errorf("create payload dir: %v", err)
