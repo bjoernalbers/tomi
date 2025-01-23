@@ -10,6 +10,10 @@ import (
 )
 
 func Build(args []string, version string) error {
+	if len(args) < 1 {
+		return fmt.Errorf("empty build args")
+	}
+	tomi := args[0]
 	payloadDir, err := os.MkdirTemp("", "payload-*")
 	if err != nil {
 		return fmt.Errorf("create payload dir: %v", err)
@@ -28,10 +32,6 @@ func Build(args []string, version string) error {
 		return fmt.Errorf("copy preinstall script: %v", err)
 	}
 	preinstall.Close()
-	tomi, err := os.Executable()
-	if err != nil {
-		return fmt.Errorf("get tomi executable: %v", err)
-	}
 	if output, err := exec.Command("/bin/cp", "-p", tomi, filepath.Join(scriptsDir, "tomi")).CombinedOutput(); err != nil {
 		return fmt.Errorf("copy tomi: %v", string(output))
 	}

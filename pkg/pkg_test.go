@@ -2,6 +2,12 @@ package pkg
 
 import "testing"
 
+func TestBuild(t *testing.T) {
+	if err := Build([]string{}, "1.2.3"); err == nil {
+		t.Fatalf("want error, but got nil")
+	}
+}
+
 func TestPreinstallScript(t *testing.T) {
 	want := `#!/bin/sh
 
