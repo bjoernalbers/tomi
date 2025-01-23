@@ -24,31 +24,7 @@ func Build(version string) error {
 	if err != nil {
 		return fmt.Errorf("create preinstall script: %v", err)
 	}
-	script := `#!/bin/sh
-
-set -eu
-
-export PATH=/bin:/sbin:/usr/bin:/usr/sbin
-
-tomi="$(dirname "$0")/tomi"
-
-loggedInUser() {
-	local user=$(stat -f %Su /dev/console)
-
-	if [ -z "${user}" ]; then exit 1; fi
-	if [ "${user}" = 'root' ]; then exit 1; fi
-	echo "${user}"
-}
-
-if username=$(loggedInUser); then
-	echo "Running tomi as user '${username}'..."
-	sudo -u "${username}" --set-home "${tomi}"
-else
-	echo "ERROR: Could not determine active user."
-	exit 1
-fi
-`
-	if _, err := io.Copy(preinstall, strings.NewReader(script)); err != nil {
+	if _, err := io.Copy(preinstall, strings.NewReader(preinstallScript())); err != nil {
 		return fmt.Errorf("copy preinstall script: %v", err)
 	}
 	preinstall.Close()
@@ -70,4 +46,31 @@ fi
 		return fmt.Errorf("%s", string(output))
 	}
 	return nil
+}
+
+func preinstallScript() string {
+	return `#!/bin/sh
+
+set -eu
+
+export PATH=/bin:/sbin:/usr/bin:/usr/sbin
+
+tomi="$(dirname "$0")/tomi"
+
+loggedInUser() {
+local user=$(stat -f %Su /dev/console)
+
+if [ -z "${user}" ]; then exit 1; fi
+if [ "${user}" = 'root' ]; then exit 1; fi
+echo "${user}"
+}
+
+if username=$(loggedInUser); then
+echo "Running tomi as user '${username}'..."
+sudo -u "${username}" --set-home "${tomi}"
+else
+echo "ERROR: Could not determine active user."
+exit 1
+fi
+`
 }
