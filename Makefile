@@ -1,6 +1,6 @@
 VERSION := $(shell git describe --tags | tr -d v)
 
-all: unit integration
+all: test
 .PHONY: all
 
 tomi: ## Build tomi binary
@@ -9,17 +9,13 @@ tomi: ## Build tomi binary
 	rm $@-*
 .PHONY: tomi
 
-release: ## Publish a new release
+release: ## Publish new release
 	goreleaser release --clean
 .PHONY: release
 
-unit: ## Run unit tests
+test: ## Run tests
 	go test ./...
-.PHONY: unit
-
-integration: tomi ## Run integration tests
-	go test main_test.go
-.PHONY: integration
+.PHONY: test
 
 # Absolutely awesome: http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 help:
